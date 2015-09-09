@@ -11,6 +11,12 @@ public class Topic extends SugarRecord<Topic> {
     public long created_at;
     public long updated_at;
     Subject subject;
+
+    public User getUser() {
+        return user;
+    }
+
+    User user;
     public Topic() {
 
     }
@@ -18,6 +24,14 @@ public class Topic extends SugarRecord<Topic> {
         this.title = title;
         this.description = description;
         this.subject = subject;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+    public Topic(String title, String description, Subject subject,User user, long created_at, long updated_at) {
+        this.title = title;
+        this.description = description;
+        this.subject = subject;
+        this.user = user;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }

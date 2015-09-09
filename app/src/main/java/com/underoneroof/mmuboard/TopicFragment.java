@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
+import com.underoneroof.mmuboard.Model.Session;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.dummy.DummyContent;
@@ -110,7 +111,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        topics = Topic.listAll(Topic.class);
+        topics = Topic.find(Topic.class, "subject = ? ", String.valueOf(mSubjectIndex));
 
         // TODO: Change Adapter to display your content
         mAdapter = new TopicAdapter(getActivity());
@@ -129,6 +130,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                                 Topic topic = new Topic(String.valueOf(input),
                                         "Testing",
                                         Subject.findById(Subject.class, mSubjectIndex),
+                                        Session.getUser(getActivity()),
                                         Calendar.getInstance().get(Calendar.SECOND),
                                         Calendar.getInstance().get(Calendar.SECOND));
                                 topic.save();
@@ -144,7 +146,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PostFragment postFragment = PostFragment.newInstance(id);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, postFragment);
                 fragmentTransaction.addToBackStack( "tag" ).commit();
             }

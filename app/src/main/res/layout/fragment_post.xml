@@ -6,11 +6,12 @@
     tools:context="com.underoneroof.mmuboard.PostFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <ListView android:id="@android:id/list" android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <TextView android:id="@android:id/empty" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:gravity="center" />
+    <ListView android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        />
     <FrameLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"

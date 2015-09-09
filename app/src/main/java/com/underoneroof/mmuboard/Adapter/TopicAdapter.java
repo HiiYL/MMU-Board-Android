@@ -1,6 +1,7 @@
 package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,12 +55,18 @@ public class TopicAdapter extends BaseAdapter {
         holder          = new ViewHolder();
         holder.title   = (TextView) convertView.findViewById(R.id.info_text);
         holder.description     = (TextView) convertView.findViewById(R.id.description_text);
+        holder.username = (TextView) convertView.findViewById(R.id.username);
 
         convertView.setTag(holder);
 
 
         holder.title.setText(topics.get(position).getTitle());
         holder.description.setText(topics.get(position).getDescription());
+        if(topics.get(position).getUser() != null) {
+            holder.username.setText(topics.get(position).getUser().username);
+        }else {
+            Log.d("USERNAME", "IS NULL");
+        }
 
 
 
@@ -69,5 +76,6 @@ public class TopicAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView title;
         TextView description ;
+        TextView username;
     }
 }

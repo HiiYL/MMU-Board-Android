@@ -1,6 +1,9 @@
 package com.underoneroof.mmuboard;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,12 +13,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+import com.underoneroof.mmuboard.Model.Session;
+import com.underoneroof.mmuboard.Model.User;
+import com.underoneroof.mmuboard.Utility.Gravatar;
+
+import org.w3c.dom.Text;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements TopicFragment.OnFragmentInteractionListener, PostFragment.OnFragmentInteractionListener {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private TextView email, username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +43,18 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        email = (TextView) findViewById(R.id.email);
+        username = (TextView) findViewById(R.id.username);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if(prefs.contains("user_id")) {
+            User user = User.findById(User.class, prefs.getLong("user_id", 0));
+            email.setText(user.email);
+            username.setText(user.name);
+            Picasso.with(MainActivity.this)
+                    .load(Gravatar.gravatarUrl(user.email))
+                    .into((CircleImageView) findViewById(R.id.profile_image));
+        }
+
 
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
@@ -53,21 +79,22 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.inbox:
                         Toast.makeText(getApplicationContext(), "Inbox Selected", Toast.LENGTH_SHORT).show();
-                        TopicFragment fragment = new TopicFragment();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.frame,fragment);
-                        fragmentTransaction.commit();
-
                         return true;
 
                     // For rest of the options we just show a toast on click
 
                     case R.id.starred:
-                        Toast.makeText(getApplicationContext(),"Stared Selected",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                         return true;
-                    case R.id.sent_mail:
-                        Toast.makeText(getApplicationContext(),"Send Selected",Toast.LENGTH_SHORT).show();
+                    case R.id.sent_mail: {
+                        Session.logOut(MainActivity.this);
+                        Intent new_intent = getIntent();
+                        finish();
+                        startActivity(new_intent);
                         return true;
+                    }
                     case R.id.drafts:
                         Toast.makeText(getApplicationContext(),"Drafts Selected",Toast.LENGTH_SHORT).show();
                         return true;

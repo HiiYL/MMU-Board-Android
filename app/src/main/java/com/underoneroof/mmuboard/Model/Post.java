@@ -9,6 +9,12 @@ public class Post extends SugarRecord<Post> {
     String title;
     String contents;
     Topic topic;
+
+    public User getUser() {
+        return user;
+    }
+
+    User user;
     long created_at;
     long updated_at;
     public Post() {
@@ -21,6 +27,14 @@ public class Post extends SugarRecord<Post> {
         this.title = title;
         this.contents = description;
         this.topic = topic;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+    public Post(String title, String description, Topic topic, User user, long created_at, long updated_at) {
+        this.title = title;
+        this.contents = description;
+        this.topic = topic;
+        this.user = user;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }

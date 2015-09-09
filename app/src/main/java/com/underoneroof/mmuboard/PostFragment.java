@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.underoneroof.mmuboard.Adapter.PostAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Post;
+import com.underoneroof.mmuboard.Model.Session;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 
@@ -96,7 +97,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        posts = Post.listAll(Post.class);
+        posts = Post.find(Post.class, " topic = ? ",String.valueOf(mTopicIndex));
 
         // TODO: Change Adapter to display your content
         mAdapter = new PostAdapter(getActivity());
@@ -115,6 +116,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                 Post post = new Post("Placeholder",
                                         String.valueOf(input),
                                         Topic.findById(Topic.class, mTopicIndex),
+                                        Session.getUser(getActivity()),
                                         Calendar.getInstance().get(Calendar.SECOND),
                                         Calendar.getInstance().get(Calendar.SECOND));
                                 post.save();

@@ -2,6 +2,7 @@ package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.R;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -56,12 +59,18 @@ public class SubjectAdapter extends BaseAdapter {
         holder          = new ViewHolder();
         holder.title   = (TextView) convertView.findViewById(R.id.info_text);
         holder.description     = (TextView) convertView.findViewById(R.id.description_text);
+        holder.username = (TextView) convertView.findViewById(R.id.username);
 
         convertView.setTag(holder);
 
 
         holder.title.setText(subjects.get(position).getTitle());
         holder.description.setText(subjects.get(position).getDescription());
+        if(subjects.get(position).getCreator() != null) {
+            holder.username.setText(subjects.get(position).getCreator().username);
+        }else {
+            Log.d("USERNAME", "IS NULL");
+        }
 
 
 
@@ -71,5 +80,6 @@ public class SubjectAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView title;
         TextView description ;
+        TextView username;
     }
 }
