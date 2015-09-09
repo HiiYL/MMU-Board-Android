@@ -12,10 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.underoneroof.mmuboard.Model.Subject;
-
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity implements TopicFragment.OnFragmentInteractionListener, PostFragment.OnFragmentInteractionListener {
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -118,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         MainActivityFragment fragment = new MainActivityFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
 

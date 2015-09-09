@@ -103,6 +103,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle(Subject.findById(Subject.class,mSubjectIndex).getTitle());
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
@@ -143,6 +144,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PostFragment postFragment = PostFragment.newInstance(id);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
                 fragmentTransaction.replace(R.id.frame, postFragment);
                 fragmentTransaction.addToBackStack( "tag" ).commit();
             }

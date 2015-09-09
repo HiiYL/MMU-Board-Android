@@ -89,7 +89,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_topic, container, false);
+        getActivity().setTitle(Topic.findById(Topic.class,mTopicIndex).getTitle());
+        View view = inflater.inflate(R.layout.fragment_post, container, false);
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
@@ -105,14 +106,14 @@ public class PostFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 new MaterialDialog.Builder(getActivity())
-                        .title("Create A Topic")
-                        .content("Title")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .input("Enter the title of your topic", null , new MaterialDialog.InputCallback() {
+                        .title("Create A Post")
+                        .content("Contents")
+                        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                        .input("Enter the contents of your post", null , new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                Post post = new Post(String.valueOf(input),
-                                        "Testing",
+                                Post post = new Post("Placeholder",
+                                        String.valueOf(input),
                                         Topic.findById(Topic.class, mTopicIndex),
                                         Calendar.getInstance().get(Calendar.SECOND),
                                         Calendar.getInstance().get(Calendar.SECOND));
@@ -124,15 +125,15 @@ public class PostFragment extends android.support.v4.app.Fragment {
 
             }
         });
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PostFragment postFragment = PostFragment.newInstance(id);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, postFragment);
-                fragmentTransaction.addToBackStack( "tag" ).commit();
-            }
-        });
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                PostFragment postFragment = PostFragment.newInstance(id);
+//                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.replace(R.id.frame, postFragment);
+//                fragmentTransaction.addToBackStack( "tag" ).commit();
+//            }
+//        });
 
         return view;
     }
