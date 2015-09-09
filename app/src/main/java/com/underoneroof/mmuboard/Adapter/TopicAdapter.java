@@ -1,51 +1,49 @@
 package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
 
 import java.util.List;
 
 /**
- * Created by Hii on 9/5/15.
+ * Created by Hii on 09/09/2015.
  */
-public class SubjectAdapter extends BaseAdapter {
-
+public class TopicAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
-    private List<Subject> subjects;
+    private List<Topic> topics;
 
-    public SubjectAdapter(Context context) {
+    public TopicAdapter(Context context) {
         myInflater = LayoutInflater.from(context);
 
     }
 
-    public void setData(List<Subject> list) {
-        this.subjects = list;
+    public void setData(List<Topic> list) {
+        this.topics = list;
 
 
     }
 
     @Override
     public int getCount() {
-        return subjects.size();
+        return topics.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return subjects.get(position);
+        return topics.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return subjects.get(position).getId();
+        return topics.get(position).getId();
     }
 
     @Override
@@ -60,8 +58,8 @@ public class SubjectAdapter extends BaseAdapter {
         convertView.setTag(holder);
 
 
-        holder.title.setText(subjects.get(position).getTitle());
-        holder.description.setText(subjects.get(position).getDescription());
+        holder.title.setText(topics.get(position).getTitle());
+        holder.description.setText(topics.get(position).getDescription());
 
 
 

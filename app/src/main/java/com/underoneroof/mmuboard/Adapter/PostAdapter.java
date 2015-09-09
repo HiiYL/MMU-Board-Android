@@ -1,51 +1,49 @@
 package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.Post;
+import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
 
 import java.util.List;
 
 /**
- * Created by Hii on 9/5/15.
+ * Created by Hii on 09/09/2015.
  */
-public class SubjectAdapter extends BaseAdapter {
-
+public class PostAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
-    private List<Subject> subjects;
+    private List<Post> posts;
 
-    public SubjectAdapter(Context context) {
+    public PostAdapter(Context context) {
         myInflater = LayoutInflater.from(context);
 
     }
 
-    public void setData(List<Subject> list) {
-        this.subjects = list;
+    public void setData(List<Post> list) {
+        this.posts = list;
 
 
     }
 
     @Override
     public int getCount() {
-        return subjects.size();
+        return posts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return subjects.get(position);
+        return posts.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return subjects.get(position).getId();
+        return posts.get(position).getId();
     }
 
     @Override
@@ -55,13 +53,13 @@ public class SubjectAdapter extends BaseAdapter {
         convertView     = myInflater.inflate(R.layout.listitem_subject, null);
         holder          = new ViewHolder();
         holder.title   = (TextView) convertView.findViewById(R.id.info_text);
-        holder.description     = (TextView) convertView.findViewById(R.id.description_text);
+        holder.contents     = (TextView) convertView.findViewById(R.id.description_text);
 
         convertView.setTag(holder);
 
 
-        holder.title.setText(subjects.get(position).getTitle());
-        holder.description.setText(subjects.get(position).getDescription());
+        holder.title.setText(posts.get(position).getTitle());
+        holder.contents.setText(posts.get(position).getContents());
 
 
 
@@ -70,6 +68,6 @@ public class SubjectAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView title;
-        TextView description ;
+        TextView contents ;
     }
 }

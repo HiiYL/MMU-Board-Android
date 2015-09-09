@@ -1,5 +1,7 @@
 package com.underoneroof.mmuboard;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -42,10 +44,11 @@ public class MainActivityFragment extends Fragment {
     TextView tv;
 //    private RecyclerView mRecyclerView;
 //    private LinearLayoutManager mLayoutManager;
-//    private List<Subject> subjectNames;
+    private List<Subject> subjects;
 //    private MyAdapter mAdapter;
     private ListView mListView;
     private SubjectAdapter mSubjectAdapter;
+    private FloatingActionButton mCreateSubjectButton;
 
     public MainActivityFragment() {
     }
@@ -55,18 +58,35 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
+        mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
         mSubjectAdapter = new SubjectAdapter(getActivity());
-        mSubjectAdapter.setData(Subject.listAll(Subject.class));
+        subjects = Subject.listAll(Subject.class);
+        mSubjectAdapter.setData(subjects);
         mListView.setAdapter(mSubjectAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("TEST", String.valueOf(position) + " - " + String.valueOf(id));
+                TopicFragment topicFragment = TopicFragment.newInstance(id);
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame, topicFragment);
+                fragmentTransaction.addToBackStack( "tag" ).commit();
+//                Log.d("TEST", String.valueOf(position) + " - " + String.valueOf(id));
+//                Intent intent = new Intent(getActivity(), TopicsActivity.class);
+//                intent.putExtra("TOPIC_ID", id);
+//                startActivity(intent);
             }
         });
+        mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateSubjectActivity.class);
+                startActivity(intent);
+            }
+        });
+
 //        ListView lv = (ListView) rootView.findViewById(R.id.subjects);
-        tv = (TextView) rootView.findViewById(R.id.subject_count);
-        long number_of_subjects = Subject.count(Subject.class, null, null);
+//        tv = (TextView) rootView.findViewById(R.id.subject_count);
+//        long number_of_subjects = Subject.count(Subject.class, null, null);
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 //        mRecyclerView.setHasFixedSize(true);
 //        mLayoutManager = new LinearLayoutManager(getActivity());
@@ -90,8 +110,9 @@ public class MainActivityFragment extends Fragment {
 //                                String name = subjectObject.getString("name");
 //                                String description = subjectObject.getString("description");
 //                                Long id = subjectObject.getLong("id");
-//                                Subject subject = new Subject(id, name,description);
-//                                subject.save();
+//                                subjects.add(new Subject(id, name, description));
+////                                Subject subject = new Subject(id, name,description);
+////                                subject.save();
 //                                mSubjectAdapter.notifyDataSetChanged();
 //                            } catch (JSONException e) {
 //                                e.printStackTrace();
