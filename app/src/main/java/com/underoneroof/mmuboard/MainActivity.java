@@ -1,14 +1,15 @@
 package com.underoneroof.mmuboard;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,19 +17,25 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.Parse;
-import com.parse.ParseInstallation;
+import com.parse.FindCallback;
+import com.parse.ParseAnonymousUtils;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
-import com.underoneroof.mmuboard.Model.Session;
-import com.underoneroof.mmuboard.Model.User;
+import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 
-import org.w3c.dom.Text;
+import java.text.ParseException;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements TopicFragment.OnFragmentInteractionListener, PostFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TopicFragment.OnFragmentInteractionListener,
+        PostFragment.OnFragmentInteractionListener, SubjectUsersFragment.OnFragmentInteractionListener  {
+    public static final String SUBJECT_GROUP_NAME = "SUBJECT";
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -186,4 +193,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
+
 }

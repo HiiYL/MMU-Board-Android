@@ -1,35 +1,28 @@
 package com.underoneroof.mmuboard;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.PostAdapter;
-import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Post;
-import com.underoneroof.mmuboard.Model.Session;
-import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -96,6 +89,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -103,40 +97,42 @@ public class PostFragment extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
+        mAdapter = new PostAdapter(getActivity(), mTopicObjectId);
+        mListView.setAdapter(mAdapter);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic");
-        query.fromLocalDatastore();
-        query.getInBackground(mTopicObjectId, new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if( e == null ) {
-                    if(parseObject == null) {
-                        Log.d("TOPIC OBJECT ID", mTopicObjectId);
-                    }else {
-                        mTopic = parseObject;
-                        getActivity().setTitle(mTopic.getString("title"));
-                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
-                        topic_query.whereEqualTo("topic", mTopic);
-                        topic_query.findInBackground(new FindCallback<ParseObject>() {
-                            @Override
-                            public void done(List<ParseObject> list, ParseException e) {
-                                if (e == null) {
-                                    ParseObject.pinAllInBackground(list);
-                                    Log.d("SIZE OF POSTS", String.valueOf(list.size()));
-                                    mAdapter = new PostAdapter(getActivity());
-                                    posts = list;
-                                    mAdapter.setData(posts);
-                                    mListView.setAdapter(mAdapter);
-
-                                } else {
-                                    Log.d("subject", "Error: " + e.getMessage());
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        });
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic");
+//        query.fromLocalDatastore();
+//        query.getInBackground(mTopicObjectId, new GetCallback<ParseObject>() {
+//            @Override
+//            public void done(ParseObject parseObject, ParseException e) {
+//                if( e == null ) {
+//                    if(parseObject == null) {
+//                        Log.d("TOPIC OBJECT ID", mTopicObjectId);
+//                    }else {
+//                        mTopic = parseObject;
+//                        getActivity().setTitle(mTopic.getString("title"));
+//                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
+//                        topic_query.whereEqualTo("topic", mTopic);
+//                        topic_query.findInBackground(new FindCallback<ParseObject>() {
+//                            @Override
+//                            public void done(List<ParseObject> list, ParseException e) {
+//                                if (e == null) {
+//                                    ParseObject.pinAllInBackground(list);
+//                                    Log.d("SIZE OF POSTS", String.valueOf(list.size()));
+////                                    mAdapter = new PostAdapter(getActivity());
+////                                    posts = list;
+////                                    mAdapter.setData(posts);
+////                                    mListView.setAdapter(mAdapter);
+//
+//                                } else {
+//                                    Log.d("subject", "Error: " + e.getMessage());
+//                                }
+//                            }
+//                        });
+//                    }
+//                }
+//            }
+//        });
         // Set OnItemClickListener so we can be notified on item clicks
 //        posts = Post.find(Post.class, " topic = ? ",String.valueOf(mTopicIndex));
 //
@@ -154,12 +150,12 @@ public class PostFragment extends android.support.v4.app.Fragment {
                         .input("Enter the contents of your post", null , new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                final ParseObject post = new ParseObject("Post");
+                                final Post post = new Post();
                                 post.put("title", String.valueOf(input).split("\\r?\\n")[0]);
                                 post.put("contents", String.valueOf(input));
-                                post.put("topic", mTopic);
+                                post.put("topic", ParseObject.createWithoutData("Topic", mTopicObjectId));
                                 post.put("createdBy", ParseUser.getCurrentUser());
-                                post.saveInBackground(new SaveCallback() {
+                                post.saveEventually(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
                                         ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
@@ -169,9 +165,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                             public void done(List<ParseObject> list, ParseException e) {
                                                 ParseObject.pinAllInBackground(list);
                                                 if (e == null) {
-                                                    posts = list;
-                                                    mAdapter.setData(posts);
-                                                    mAdapter.notifyDataSetChanged();
+                                                    loadFromParse();
                                                 } else {
                                                     Log.d("subject", "Error: " + e.getMessage());
                                                 }
@@ -179,6 +173,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                         });
                                     }
                                 });
+                                mAdapter.loadObjects();
+                                mAdapter.notifyDataSetChanged();
                             }
                         }).show();
 
@@ -234,6 +230,27 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+    private void loadFromParse() {
+        ParseQuery<Post> query = Post.getQuery();
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, com.parse.ParseException e) {
+                if (e == null) {
+                    ParseObject.pinAllInBackground(posts,
+                            new SaveCallback() {
+                                @Override
+                                public void done(com.parse.ParseException e) {
+                                    mAdapter.loadObjects();
+                                }
+                            });
+                } else {
+                    Log.i("Topic Adapter",
+                            "loadFromParse: Error finding pinned todos: "
+                                    + e.getMessage());
+                }
+            }
+        });
     }
 
 }

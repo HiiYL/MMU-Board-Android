@@ -1,45 +1,37 @@
 package com.underoneroof.mmuboard;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.parse.FindCallback;
-import com.parse.ParseException;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.SubjectUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -51,43 +43,40 @@ public class MainActivityFragment extends Fragment {
     private List<Subject> subjects;
 //    private MyAdapter mAdapter;
     private ListView mListView;
-    private SubjectAdapter mSubjectAdapter;
+    private ParseQueryAdapter<ParseObject> mSubjectAdapter;
     private FloatingActionButton mCreateSubjectButton;
 
     public MainActivityFragment() {
+    }
+    @Override
+    public void onResume() {
+        loadFromParse();
+        super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Home");
+        getActivity().setTitle("My Subjects");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
-        mSubjectAdapter = new SubjectAdapter(getActivity());
+//        mSubjectAdapter = new SubjectAdapter(getActivity());
 //        subjects = Subject.listAll(Subject.class);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Subject");
-        query.findInBackground(new FindCallback<ParseObject>() {
+        mSubjectAdapter = new SubjectAdapter(getActivity());
+        mListView.setAdapter(mSubjectAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                Log.d("SIZE OF LIST", String.valueOf(list.size()));
-                mSubjectAdapter.setData(list);
-                ParseObject.pinAllInBackground(list);
-                mListView.setAdapter(mSubjectAdapter);
-                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getObjectId(position));
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
 
-                        fragmentTransaction.replace(R.id.frame, topicFragment);
-                        fragmentTransaction.addToBackStack("tag").commit();
-                    }
-                });
+                fragmentTransaction.replace(R.id.frame, topicFragment);
+                fragmentTransaction.addToBackStack("tag").commit();
+
             }
         });
-//        mSubjectAdapter.setData(subjects);
 
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,54 +85,80 @@ public class MainActivityFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-//        ListView lv = (ListView) rootView.findViewById(R.id.subjects);
-//        tv = (TextView) rootView.findViewById(R.id.subject_count);
-//        long number_of_subjects = Subject.count(Subject.class, null, null);
-//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-//        mRecyclerView.setHasFixedSize(true);
-//        mLayoutManager = new LinearLayoutManager(getActivity());
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.setItemAnimator(new LandingAnimator());
-//        subjectNames = Subject.listAll(Subject.class);
-//        mAdapter = new MyAdapter(subjectNames, getActivity());
-//        mRecyclerView.setAdapter(mAdapter);
-        String url = "https://mmuboard.herokuapp.com/subjects.json";
-//        Subject.deleteAll(Subject.class);
-
-//        JsonArrayRequest jsObjRequest = new JsonArrayRequest
-//                (Request.Method.GET, url, (String)null, new Response.Listener<JSONArray>() {
-//
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        Log.d("RECEIVED RESPONSE", "success");
-//                        for ( int i = 0 ; i < response.length(); i++) {
-//                            try {
-//                                JSONObject subjectObject = response.getJSONObject(i);
-//                                String name = subjectObject.getString("name");
-//                                String description = subjectObject.getString("description");
-//                                Long id = subjectObject.getLong("id");
-//                                subjects.add(new Subject(id, name, description));
-////                                Subject subject = new Subject(id, name,description);
-////                                subject.save();
-//                                mSubjectAdapter.notifyDataSetChanged();
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                        tv.setText("Response: " + response.toString());
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.d("RECEIVED RESPONSE", error.toString());
-//                        // TODO Auto-generated method stub
-//
-//                    }
-//                });
-//        tv.setText(Long.toString(number_of_subjects));
-//        MySingleton.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
         return rootView;
 
     }
+    private void loadFromParse() {
+        ParseQuery<SubjectUser> query = SubjectUser.getQuery();
+//        query.whereEqualTo("author", ParseUser.getCurrentUser());
+        query.include("subject").include("users").findInBackground(new FindCallback<SubjectUser>() {
+            @Override
+            public void done(List<SubjectUser> subjects, com.parse.ParseException e) {
+                if (e == null) {
+                    ParseObject.pinAllInBackground(subjects,
+                            new SaveCallback() {
+                                @Override
+                                public void done(com.parse.ParseException e) {
+                                    if (e == null) {
+                                        mSubjectAdapter.loadObjects();
+                                    } else {
+                                        Log.i("Subject Adapter",
+                                                "Error pinning subjects: "
+                                                        + e.getMessage());
+                                    }
+                                }
+
+                                public void done(ParseException e) {
+
+                                }
+                            });
+                } else {
+                    Log.i("TodoListActivity",
+                            "loadFromParse: Error finding pinned todos: "
+                                    + e.getMessage());
+                }
+            }
+        });
+    }
+    private void syncTodosToParse() {
+            if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
+                ParseQuery<Subject> query = Subject.getQuery();
+                query.fromPin(MainActivity.SUBJECT_GROUP_NAME);
+                query.whereEqualTo("isDraft", true);
+                query.findInBackground(new FindCallback<Subject>() {
+                    @Override
+                    public void done(List<Subject> objects, com.parse.ParseException e) {
+                        for (final Subject subject : subjects) {
+                            // Set is draft flag to false before
+                            // syncing to Parse
+                            subject.setDraft(false);
+                            subject.saveEventually(new SaveCallback() {
+
+                                @Override
+                                public void done(com.parse.ParseException e) {
+                                    if (e == null) {
+                                        // Let adapter know to update view
+                                        mSubjectAdapter
+                                                .notifyDataSetChanged();
+                                    } else {
+                                        // Reset the is draft flag locally to true
+                                        subject.setDraft(true);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+                // If we have a network connection and a current
+                // logged in user, sync the todos
+            } else {
+                // If we have a network connection but no logged in user, direct
+                // the person to log in or sign up.
+                Toast.makeText(
+                        getActivity(),
+                        "You appear to not be logged in! Log in to continue",
+                        Toast.LENGTH_LONG).show();
+            }
+    }
+
 }

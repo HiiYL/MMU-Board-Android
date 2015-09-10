@@ -1,11 +1,14 @@
 package com.underoneroof.mmuboard.Model;
 
-import com.orm.SugarRecord;
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 /**
  * Created by Hii on 09/09/2015.
  */
-public class SubjectUser extends SugarRecord<SubjectUser> {
+@ParseClassName("SubjectUser")
+public class SubjectUser extends ParseObject {
     public User user;
     public Subject subject;
     boolean approved = false;
@@ -23,4 +26,7 @@ public class SubjectUser extends SugarRecord<SubjectUser> {
     }
 
 
+    public static ParseQuery<SubjectUser> getQuery() {
+        return ParseQuery.getQuery(SubjectUser.class);
+    }
 }

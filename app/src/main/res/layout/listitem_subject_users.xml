@@ -7,27 +7,17 @@
     android:layout_gravity="center"
     card_view:cardElevation="4dp"
     android:minHeight="120dp"
-    android:layout_width="match_parent"
+    android:layout_width="120dp"
     card_view:cardUseCompatPadding="true"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
     card_view:cardPreventCornerOverlap="false"
     card_view:contentPadding="15dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:textSize="10sp"
-        android:layout_alignParentRight="true"
-        android:text="Posted Yesterday at 10.00am"/>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="horizontal">
+
         <LinearLayout
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="match_parent"
             android:orientation="vertical">
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -45,19 +35,18 @@
                 android:text="Kappa"
                 android:textSize="10sp"
                 android:id="@+id/username"/>
-        </LinearLayout>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <TextView
-            android:id="@+id/contents"
-            android:text="Contents"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
+            <TextView
+                android:id="@+id/access_status"
+                android:text="Approved"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="6sp"
+                android:text="Last Updated: 10.00am"/>
     </LinearLayout>
 
 

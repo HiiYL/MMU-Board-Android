@@ -9,30 +9,30 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.R;
+import com.underoneroof.mmuboard.Utility.Gravatar;
 
-//import com.parse.ParseQueryAdapter;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by Hii on 9/5/15.
+ * Created by Hii on 10/09/2015.
  */
-public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
-
-    public SubjectAdapter(Context context) {
+public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
+    public SubjectUsersAdapter(Context context, final String subjectObjectId) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
                 return ParseQuery.getQuery("SubjectUser")
                         .include("subject")
                         .include("user")
-                                .whereEqualTo("user", ParseUser.getCurrentUser())
-                        .fromLocalDatastore();
+                        .whereEqualTo("subject", ParseObject.createWithoutData("Subject", subjectObjectId));
+//                        .fromLocalDatastore();
             }
         });
     }
-    @Override
     public View getItemView(ParseObject object, View v, ViewGroup parent) {
         if (v == null) {
-            v = View.inflate(getContext(), R.layout.listitem_subject, null);
+            v = View.inflate(getContext(), R.layout.listitem_subject_users, null);
         }
 
         // Take advantage of ParseQueryAdapter's getItemView logic for
@@ -42,12 +42,8 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
 //        super.getItemView(object, v, parent);
 
         // Do additional configuration before returning the View.
-        TextView descriptionView = (TextView) v.findViewById(R.id.description_text);
-        TextView titleView = (TextView) v.findViewById(R.id.info_text);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         TextView accessView = (TextView) v.findViewById(R.id.access_status);
-        titleView.setText(object.getParseObject("subject").getString("title"));
-        descriptionView.setText(object.getParseObject("subject").getString("description"));
         usernameView.setText(object.getParseUser("user").getUsername());
         switch(object.getInt("status")) {
             case 0:
@@ -63,7 +59,11 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
                 accessView.setText("UNKNOWN");
                 break;
         }
+        CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
+//        titleView.setText(object.getString("title"));
+        Picasso.with(parent.getContext())
+                .load(Gravatar.gravatarUrl(object.getParseUser("user").getEmail()))
+                .into(profileView);
         return v;
     }
-
 }

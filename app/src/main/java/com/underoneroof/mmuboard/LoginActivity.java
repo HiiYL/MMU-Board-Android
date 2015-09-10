@@ -1,26 +1,17 @@
 package com.underoneroof.mmuboard;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.parse.LogInCallback;
-import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
-import com.underoneroof.mmuboard.Model.Session;
-import com.underoneroof.mmuboard.Model.User;
-
-import java.text.ParseException;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     Button regBtn, loginBtn;

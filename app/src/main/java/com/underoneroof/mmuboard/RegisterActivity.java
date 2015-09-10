@@ -1,7 +1,7 @@
 package com.underoneroof.mmuboard;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,12 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-import com.underoneroof.mmuboard.Model.User;
 
 public class RegisterActivity extends AppCompatActivity {
     Button regBtn, loginBtn;
