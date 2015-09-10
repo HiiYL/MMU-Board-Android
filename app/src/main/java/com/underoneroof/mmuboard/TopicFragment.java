@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Session;
@@ -46,9 +54,10 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String mSubjectObjectId;
+    private ParseObject mSubject;
     private String mParam2;
-    private long mSubjectIndex;
+//    private long mSubjectIndex;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,7 +72,9 @@ public class TopicFragment extends android.support.v4.app.Fragment {
      */
     private TopicAdapter mAdapter;
     private FloatingActionButton mCreateSubjectButton;
-    private List<Topic> topics;
+
+    private List<ParseObject> topics;
+//    private List<Topic> topics;
 
     // TODO: Rename and change types of parameters
     public static TopicFragment newInstance(String param1, String param2) {
@@ -82,6 +93,14 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         f.setArguments(args);
         return f;
     }
+    public static TopicFragment newInstance(String index) {
+        TopicFragment f = new TopicFragment();
+        // Supply index input as an argument.
+        Bundle args = new Bundle();
+        args.putString("index", index);
+        f.setArguments(args);
+        return f;
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -95,7 +114,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mSubjectIndex = getArguments().getLong("index");
+            mSubjectObjectId = getArguments().getString("index");
         }
 
 
@@ -104,19 +123,48 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle(Subject.findById(Subject.class,mSubjectIndex).getTitle());
+
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Subject");
+        query.whereEqualTo("objectId", mSubjectObjectId);
+        query.fromLocalDatastore();
+        query.getInBackground(mSubjectObjectId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if( e == null ) {
+                    mSubject = parseObject;
+                    getActivity().setTitle(mSubject.getString("title"));
+                    ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Topic");
+                    topic_query.whereEqualTo("subject", mSubject);
+                    topic_query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> list, ParseException e) {
+                            if (e == null) {
+                                ParseObject.pinAllInBackground(list);
+                                Log.d("SIZE OF TOPICS", String.valueOf(list.size()));
+                                mAdapter = new TopicAdapter(getActivity());
+                                topics = list;
+                                mAdapter.setData(topics);
+                                mListView.setAdapter(mAdapter);
+
+                            } else {
+                                Log.d("subject", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        topics = Topic.find(Topic.class, "subject = ? ", String.valueOf(mSubjectIndex));
-
+//        topics = Topic.find(Topic.class, "subject = ? ", String.valueOf(mSubjectIndex));
         // TODO: Change Adapter to display your content
-        mAdapter = new TopicAdapter(getActivity());
-        mAdapter.setData(topics);
-        mListView.setAdapter(mAdapter);
+
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,15 +175,40 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                         .input("Enter the title of your topic", null , new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                Topic topic = new Topic(String.valueOf(input),
-                                        "Testing",
-                                        Subject.findById(Subject.class, mSubjectIndex),
-                                        Session.getUser(getActivity()),
-                                        Calendar.getInstance().get(Calendar.SECOND),
-                                        Calendar.getInstance().get(Calendar.SECOND));
-                                topic.save();
-                                topics.add(topic);
-                                mAdapter.notifyDataSetChanged();
+//                                Topic topic = new Topic(String.valueOf(input),
+//                                        "Testing",
+//                                        Subject.findById(Subject.class, mSubjectIndex),
+//                                        Session.getUser(getActivity()),
+//                                        Calendar.getInstance().get(Calendar.SECOND),
+//                                        Calendar.getInstance().get(Calendar.SECOND));
+//                                topic.save();
+//                                topics.add(topic);
+//                                mAdapter.notifyDataSetChanged();
+                                final ParseObject topic = new ParseObject("Topic");
+                                topic.put("title", String.valueOf(input).split("\\r?\\n")[0]);
+                                topic.put("description", String.valueOf(input));
+                                topic.put("subject", mSubject);
+                                topic.put("createdBy", ParseUser.getCurrentUser());
+                                topic.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Topic");
+                                        topic_query.whereEqualTo("subject", mSubject);
+                                        topic_query.findInBackground(new FindCallback<ParseObject>() {
+                                            @Override
+                                            public void done(List<ParseObject> list, ParseException e) {
+                                                ParseObject.pinAllInBackground(list);
+                                                if (e == null) {
+                                                    topics = list;
+                                                    mAdapter.setData(topics);
+                                                    mAdapter.notifyDataSetChanged();
+                                                } else {
+                                                    Log.d("subject", "Error: " + e.getMessage());
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         }).show();
 
@@ -144,7 +217,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PostFragment postFragment = PostFragment.newInstance(id);
+                PostFragment postFragment = PostFragment.newInstance(mAdapter.getObjectId(position));
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, postFragment);

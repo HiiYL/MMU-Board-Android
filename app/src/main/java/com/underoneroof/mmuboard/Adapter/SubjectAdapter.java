@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.R;
 
@@ -23,17 +25,15 @@ import java.util.List;
 public class SubjectAdapter extends BaseAdapter {
 
     private LayoutInflater myInflater;
-    private List<Subject> subjects;
+    private List<ParseObject> subjects;
 
     public SubjectAdapter(Context context) {
         myInflater = LayoutInflater.from(context);
 
     }
 
-    public void setData(List<Subject> list) {
+    public void setData(List<ParseObject> list) {
         this.subjects = list;
-
-
     }
 
     @Override
@@ -48,26 +48,32 @@ public class SubjectAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return subjects.get(position).getId();
+        return 0;
+    }
+    public String getObjectId(int position) {
+        return subjects.get(position).getObjectId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        if(convertView == null ) {
+            convertView = myInflater.inflate(R.layout.listitem_subject, parent, false);
+            holder = new ViewHolder();
+            holder.title = (TextView) convertView.findViewById(R.id.info_text);
+            holder.description = (TextView) convertView.findViewById(R.id.description_text);
+            holder.username = (TextView) convertView.findViewById(R.id.username);
 
-        convertView     = myInflater.inflate(R.layout.listitem_subject, null);
-        holder          = new ViewHolder();
-        holder.title   = (TextView) convertView.findViewById(R.id.info_text);
-        holder.description     = (TextView) convertView.findViewById(R.id.description_text);
-        holder.username = (TextView) convertView.findViewById(R.id.username);
-
-        convertView.setTag(holder);
+            convertView.setTag(holder);
+        }else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
 
-        holder.title.setText(subjects.get(position).getTitle());
-        holder.description.setText(subjects.get(position).getDescription());
-        if(subjects.get(position).getCreator() != null) {
-            holder.username.setText(subjects.get(position).getCreator().username);
+        holder.title.setText(subjects.get(position).getString("title"));
+        holder.description.setText(subjects.get(position).getString("description"));
+        if(subjects.get(position).getParseUser("createdBy") != null) {
+            holder.username.setText(subjects.get(position).getParseUser("createdBy").getUsername());
         }else {
             Log.d("USERNAME", "IS NULL");
         }

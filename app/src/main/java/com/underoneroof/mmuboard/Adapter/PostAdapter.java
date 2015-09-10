@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.parse.ParseObject;
 import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Topic;
@@ -23,14 +24,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class PostAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
-    private List<Post> posts;
+    private List<ParseObject> posts;
 
     public PostAdapter(Context context) {
         myInflater = LayoutInflater.from(context);
 
     }
 
-    public void setData(List<Post> list) {
+    public void setData(List<ParseObject> list) {
         this.posts = list;
 
 
@@ -48,30 +49,40 @@ public class PostAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return posts.get(position).getId();
+        return 0;
+    }
+
+    public String getObjectId(int position) {
+        return posts.get(position).getObjectId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
-        convertView     = myInflater.inflate(R.layout.listitem_post, null);
-        holder          = new ViewHolder();
-//        holder.title   = (TextView) convertView.findViewById(R.id.info_text);
-        holder.contents     = (TextView) convertView.findViewById(R.id.description_text);
-        holder.username = (TextView) convertView.findViewById(R.id.username);
-        holder.profile_image = (CircleImageView) convertView.findViewById(R.id.profile_image);
+        if (convertView == null) {
 
-        convertView.setTag(holder);
+            convertView = myInflater.inflate(R.layout.listitem_post, parent, false);
+            holder = new ViewHolder();
+//        holder.title   = (TextView) convertView.findViewById(R.id.info_text);
+            holder.contents = (TextView) convertView.findViewById(R.id.description_text);
+            holder.username = (TextView) convertView.findViewById(R.id.username);
+            holder.profile_image = (CircleImageView) convertView.findViewById(R.id.profile_image);
+
+            convertView.setTag(holder);
+        }else {
+            holder = (ViewHolder) convertView.getTag();
+
+        }
 
 
 //        holder.title.setText(posts.get(position).getTitle());
 
-        holder.contents.setText(posts.get(position).getContents());
-        if(posts.get(position).getUser() != null) {
-            holder.username.setText(posts.get(position).getUser().username);
+        holder.contents.setText(posts.get(position).getString("contents"));
+        if(posts.get(position).getParseUser("createdBy") != null) {
+            holder.username.setText(posts.get(position).getParseUser("createdBy").getUsername());
             Picasso.with(parent.getContext())
-                    .load(Gravatar.gravatarUrl(posts.get(position).getUser().email))
+                    .load(Gravatar.gravatarUrl(posts.get(position).getParseUser("createdBy").getEmail()))
                     .into(holder.profile_image);
         }else {
             Log.d("USERNAME", "IS NULL");

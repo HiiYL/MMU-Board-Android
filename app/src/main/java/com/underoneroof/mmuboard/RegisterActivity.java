@@ -2,6 +2,7 @@ package com.underoneroof.mmuboard;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 import com.underoneroof.mmuboard.Model.User;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -38,10 +42,31 @@ public class RegisterActivity extends AppCompatActivity {
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = new User(name.getText().toString(), username.getText().toString(),
-                        password.getText().toString(), email.getText().toString(), lecturerBtn.isChecked() ? 1 : 0 );
-                user.save();
-                finish();
+//                User user = new User(name.getText().toString(), username.getText().toString(),
+//                        password.getText().toString(), email.getText().toString(), lecturerBtn.isChecked() ? 1 : 0 );
+//                user.save();
+                ParseUser user = new ParseUser();
+                user.setUsername(username.getText().toString());
+                user.setPassword(password.getText().toString());
+                user.setEmail(email.getText().toString());
+                user.put("name", name.getText().toString());
+// other fields can be set just like with ParseObject
+
+                user.signUpInBackground(new SignUpCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d("YAY", "YAY");
+                            finish();
+                            // Hooray! Let them use the app now.
+                        } else {
+                            Log.d("NAY", "NAY");
+                            // Sign up didn't succeed. Look at the ParseException
+                            // to figure out what went wrong
+                        }
+
+                    }
+                });
             }
         });
     }

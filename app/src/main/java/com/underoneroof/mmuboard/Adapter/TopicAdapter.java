@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.parse.ParseObject;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
@@ -19,14 +20,14 @@ import java.util.List;
  */
 public class TopicAdapter extends BaseAdapter {
     private LayoutInflater myInflater;
-    private List<Topic> topics;
+    private List<ParseObject> topics;
 
     public TopicAdapter(Context context) {
         myInflater = LayoutInflater.from(context);
 
     }
 
-    public void setData(List<Topic> list) {
+    public void setData(List<ParseObject> list) {
         this.topics = list;
 
 
@@ -44,26 +45,34 @@ public class TopicAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return topics.get(position).getId();
+        return 0;
+    }
+
+    public String getObjectId(int position) {
+        return topics.get(position).getObjectId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
-        convertView     = myInflater.inflate(R.layout.listitem_subject, null);
-        holder          = new ViewHolder();
-        holder.title   = (TextView) convertView.findViewById(R.id.info_text);
-        holder.description     = (TextView) convertView.findViewById(R.id.description_text);
-        holder.username = (TextView) convertView.findViewById(R.id.username);
+        if(convertView == null ) {
 
-        convertView.setTag(holder);
+            convertView = myInflater.inflate(R.layout.listitem_subject, parent, false);
+            holder = new ViewHolder();
+            holder.title = (TextView) convertView.findViewById(R.id.info_text);
+            holder.description = (TextView) convertView.findViewById(R.id.description_text);
+            holder.username = (TextView) convertView.findViewById(R.id.username);
 
+            convertView.setTag(holder);
+        }else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
-        holder.title.setText(topics.get(position).getTitle());
-        holder.description.setText(topics.get(position).getDescription());
-        if(topics.get(position).getUser() != null) {
-            holder.username.setText(topics.get(position).getUser().username);
+        holder.title.setText(topics.get(position).getString("title"));
+        holder.description.setText(topics.get(position).getString("description"));
+        if(topics.get(position).getParseUser("createdBy") != null) {
+            holder.username.setText(topics.get(position).getParseUser("createdBy").getUsername());
         }else {
             Log.d("USERNAME", "IS NULL");
         }

@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Session;
 import com.underoneroof.mmuboard.Model.User;
@@ -35,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Initializing Toolbar and setting it as the actionbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,15 +47,19 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         email = (TextView) findViewById(R.id.email);
         username = (TextView) findViewById(R.id.username);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        if(prefs.contains("user_id")) {
-            User user = User.findById(User.class, prefs.getLong("user_id", 0));
-            email.setText(user.email);
-            username.setText(user.name);
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            email.setText(currentUser.getEmail());
+            username.setText(currentUser.getUsername());
             Picasso.with(MainActivity.this)
-                    .load(Gravatar.gravatarUrl(user.email))
+                    .load(Gravatar.gravatarUrl(currentUser.getEmail()))
                     .into((CircleImageView) findViewById(R.id.profile_image));
         }
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//        if(prefs.contains("user_id")) {
+//            User user = User.findById(User.class, prefs.getLong("user_id", 0));
+//
+//        }
 
 
 
@@ -89,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         startActivity(intent);
                         return true;
                     case R.id.sent_mail: {
-                        Session.logOut(MainActivity.this);
+                        ParseUser.logOut();
                         Intent new_intent = getIntent();
                         finish();
                         startActivity(new_intent);

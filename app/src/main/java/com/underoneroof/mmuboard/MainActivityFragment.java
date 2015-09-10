@@ -23,6 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
 
@@ -61,24 +65,30 @@ public class MainActivityFragment extends Fragment {
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
         mSubjectAdapter = new SubjectAdapter(getActivity());
-        subjects = Subject.listAll(Subject.class);
-        mSubjectAdapter.setData(subjects);
-        mListView.setAdapter(mSubjectAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        subjects = Subject.listAll(Subject.class);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Subject");
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TopicFragment topicFragment = TopicFragment.newInstance(id);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+            public void done(List<ParseObject> list, ParseException e) {
+                Log.d("SIZE OF LIST", String.valueOf(list.size()));
+                mSubjectAdapter.setData(list);
+                ParseObject.pinAllInBackground(list);
+                mListView.setAdapter(mSubjectAdapter);
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getObjectId(position));
+                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
 
-                fragmentTransaction.replace(R.id.frame, topicFragment);
-                fragmentTransaction.addToBackStack( "tag" ).commit();
-//                Log.d("TEST", String.valueOf(position) + " - " + String.valueOf(id));
-//                Intent intent = new Intent(getActivity(), TopicsActivity.class);
-//                intent.putExtra("TOPIC_ID", id);
-//                startActivity(intent);
+                        fragmentTransaction.replace(R.id.frame, topicFragment);
+                        fragmentTransaction.addToBackStack("tag").commit();
+                    }
+                });
             }
         });
+//        mSubjectAdapter.setData(subjects);
+
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

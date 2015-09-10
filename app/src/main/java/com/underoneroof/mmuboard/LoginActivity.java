@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,14 +13,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Model.Session;
 import com.underoneroof.mmuboard.Model.User;
 
+import java.text.ParseException;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     Button regBtn, loginBtn;
-    EditText email, password;
+    EditText username, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         regBtn = (Button) findViewById(R.id.register_btn);
         loginBtn = (Button) findViewById(R.id.login_btn);
-        email = (EditText) findViewById(R.id.email);
+        username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,19 +44,33 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<User> user = User.find(User.class, "email = ? and password = ? ",
-                        email.getText().toString(), password.getText().toString());
-                if(user.size() > 0) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putLong("user_id", user.get(0).getId());
-                    editor.apply();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }else {
-                    Toast.makeText(LoginActivity.this, "Nobody is here", Toast.LENGTH_SHORT).show();
-                }
+//                List<User> user = User.find(User.class, "email = ? and password = ? ",
+//                        email.getText().toString(), password.getText().toString());
+//                if(user.size() > 0) {
+                    ParseUser.logInInBackground(username.getText().toString(), password.getText().toString(), new LogInCallback() {
+                        @Override
+                        public void done(ParseUser parseUser, com.parse.ParseException e) {
+                            if (parseUser != null) {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                // Hooray! The user is logged in.
+                            } else {
+                                Log.d("UHOH", "UHOH");
+                                // Signup failed. Look at the ParseException to see what happened.
+                            }
+                        }
+                    });
+//                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+//                    SharedPreferences.Editor editor = prefs.edit();
+//                    editor.putLong("user_id", user.get(0).getId());
+//                    editor.apply();
+//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    startActivity(intent);
+//                }else {
+//                    Toast.makeText(LoginActivity.this, "Nobody is here", Toast.LENGTH_SHORT).show();
+//                }
 
 
             }

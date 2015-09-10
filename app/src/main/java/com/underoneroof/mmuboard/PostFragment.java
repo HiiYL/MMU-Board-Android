@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.PostAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Post;
@@ -39,13 +48,14 @@ public class PostFragment extends android.support.v4.app.Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String mTopicObjectId;
     private String mParam2;
     private long mTopicIndex;
     private PostAdapter mAdapter;
     private FloatingActionButton mCreateSubjectButton;
-    private List<Post> posts;
+    private List<ParseObject> posts;
     private ListView mListView;
+    private ParseObject mTopic;
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,10 +76,10 @@ public class PostFragment extends android.support.v4.app.Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public static PostFragment newInstance(long topic_index) {
+    public static PostFragment newInstance(String topic_index) {
         PostFragment fragment = new PostFragment();
         Bundle args = new Bundle();
-        args.putLong("index", topic_index);
+        args.putString("index", topic_index);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,7 +92,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mTopicIndex = getArguments().getLong("index");
+            mTopicObjectId = getArguments().getString("index");
         }
     }
 
@@ -90,19 +100,50 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        getActivity().setTitle(Topic.findById(Topic.class,mTopicIndex).getTitle());
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic");
+        query.fromLocalDatastore();
+        query.getInBackground(mTopicObjectId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if( e == null ) {
+                    if(parseObject == null) {
+                        Log.d("TOPIC OBJECT ID", mTopicObjectId);
+                    }else {
+                        mTopic = parseObject;
+                        getActivity().setTitle(mTopic.getString("title"));
+                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
+                        topic_query.whereEqualTo("topic", mTopic);
+                        topic_query.findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> list, ParseException e) {
+                                if (e == null) {
+                                    ParseObject.pinAllInBackground(list);
+                                    Log.d("SIZE OF POSTS", String.valueOf(list.size()));
+                                    mAdapter = new PostAdapter(getActivity());
+                                    posts = list;
+                                    mAdapter.setData(posts);
+                                    mListView.setAdapter(mAdapter);
 
+                                } else {
+                                    Log.d("subject", "Error: " + e.getMessage());
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
         // Set OnItemClickListener so we can be notified on item clicks
-        posts = Post.find(Post.class, " topic = ? ",String.valueOf(mTopicIndex));
-
-        // TODO: Change Adapter to display your content
-        mAdapter = new PostAdapter(getActivity());
-        mAdapter.setData(posts);
-        mListView.setAdapter(mAdapter);
+//        posts = Post.find(Post.class, " topic = ? ",String.valueOf(mTopicIndex));
+//
+//        // TODO: Change Adapter to display your content
+//        mAdapter = new PostAdapter(getActivity());
+//        mAdapter.setData(posts);
+//        mListView.setAdapter(mAdapter);
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,15 +154,31 @@ public class PostFragment extends android.support.v4.app.Fragment {
                         .input("Enter the contents of your post", null , new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-                                Post post = new Post("Placeholder",
-                                        String.valueOf(input),
-                                        Topic.findById(Topic.class, mTopicIndex),
-                                        Session.getUser(getActivity()),
-                                        Calendar.getInstance().get(Calendar.SECOND),
-                                        Calendar.getInstance().get(Calendar.SECOND));
-                                post.save();
-                                posts.add(post);
-                                mAdapter.notifyDataSetChanged();
+                                final ParseObject post = new ParseObject("Post");
+                                post.put("title", String.valueOf(input).split("\\r?\\n")[0]);
+                                post.put("contents", String.valueOf(input));
+                                post.put("topic", mTopic);
+                                post.put("createdBy", ParseUser.getCurrentUser());
+                                post.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
+                                        topic_query.whereEqualTo("topic", mTopic);
+                                        topic_query.findInBackground(new FindCallback<ParseObject>() {
+                                            @Override
+                                            public void done(List<ParseObject> list, ParseException e) {
+                                                ParseObject.pinAllInBackground(list);
+                                                if (e == null) {
+                                                    posts = list;
+                                                    mAdapter.setData(posts);
+                                                    mAdapter.notifyDataSetChanged();
+                                                } else {
+                                                    Log.d("subject", "Error: " + e.getMessage());
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         }).show();
 
