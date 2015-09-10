@@ -68,12 +68,16 @@ public class MainActivityFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
-                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                if(mSubjectAdapter.getItem(position).getInt("status") == 0) {
+                    Toast.makeText(parent.getContext(), "You do not have permission to view this subject", Toast.LENGTH_SHORT).show();
+                }else {
+                    TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
+                    android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
 
-                fragmentTransaction.replace(R.id.frame, topicFragment);
-                fragmentTransaction.addToBackStack("tag").commit();
+                    fragmentTransaction.replace(R.id.frame, topicFragment);
+                    fragmentTransaction.addToBackStack("tag").commit();
+                }
 
             }
         });

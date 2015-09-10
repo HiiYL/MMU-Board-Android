@@ -34,7 +34,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements TopicFragment.OnFragmentInteractionListener,
-        PostFragment.OnFragmentInteractionListener, SubjectUsersFragment.OnFragmentInteractionListener  {
+        PostFragment.OnFragmentInteractionListener, SubjectUsersFragment.OnFragmentInteractionListener,
+        SubjectListFragment.OnFragmentInteractionListener{
     public static final String SUBJECT_GROUP_NAME = "SUBJECT";
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -90,8 +91,13 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
 
                     //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.inbox:
-                        Toast.makeText(getApplicationContext(), "Inbox Selected", Toast.LENGTH_SHORT).show();
+                    case R.id.my_subjects:
+                        MainActivityFragment mainActivityFragment = new MainActivityFragment();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                                .replace(R.id.frame, mainActivityFragment)
+                                .commit();
                         return true;
 
                     // For rest of the options we just show a toast on click
@@ -109,7 +115,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         return true;
                     }
                     case R.id.drafts:
-                        Toast.makeText(getApplicationContext(),"Drafts Selected",Toast.LENGTH_SHORT).show();
+                        SubjectListFragment subjectListFragment = new SubjectListFragment();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                        fragmentTransaction.replace(R.id.frame, subjectListFragment);
+                        fragmentTransaction.commit();
                         return true;
                     case R.id.allmail:
                         Toast.makeText(getApplicationContext(),"All Mail Selected",Toast.LENGTH_SHORT).show();

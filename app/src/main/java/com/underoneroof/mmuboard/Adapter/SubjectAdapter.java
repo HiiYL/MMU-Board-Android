@@ -25,6 +25,7 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
                         .include("subject")
                         .include("user")
                                 .whereEqualTo("user", ParseUser.getCurrentUser())
+                        .orderByDescending("status")
                         .fromLocalDatastore();
             }
         });
