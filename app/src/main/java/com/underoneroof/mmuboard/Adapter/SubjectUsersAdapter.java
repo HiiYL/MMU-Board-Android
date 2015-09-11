@@ -73,7 +73,7 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
 
             }
         });
-        usernameView.setText(object.getParseUser("user").getUsername());
+        usernameView.setText(object.getParseUser("user").getString("name"));
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
 //        titleView.setText(object.getString("title"));
         Picasso.with(parent.getContext())

@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +42,39 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private TextView email, username;
+    private MainActivityFragment mainActivityFragment;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("MyApp", "onActivityResult in LoginActivity is called");
+        email = (TextView) findViewById(R.id.email);
+        username = (TextView) findViewById(R.id.username);
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            email.setText(currentUser.getEmail());
+            username.setText(currentUser.getUsername());
+            if(currentUser.getEmail() != null ) {
+                Picasso.with(MainActivity.this)
+                        .load(Gravatar.gravatarUrl(currentUser.getEmail()))
+                        .into((CircleImageView) findViewById(R.id.profile_image));
+            }
+        }
+        if(mainActivityFragment != null) {
+            mainActivityFragment.loadFromParse();
+        }else {
+            Log.e("MAIN ACTIVITY FRAGMENT", "mainActivityFragment IS NULL");
+        }
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(ParseUser.getCurrentUser() == null) {
+            ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
+            startActivityForResult(builder.build(), 0);
+        }
         setContentView(R.layout.activity_main);
         // Initializing Toolbar and setting it as the actionbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -159,10 +189,10 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
         actionBarDrawerToggle.syncState();
 
 
-        MainActivityFragment fragment = new MainActivityFragment();
+        mainActivityFragment = new MainActivityFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
-        fragmentTransaction.replace(R.id.frame, fragment);
+        fragmentTransaction.replace(R.id.frame, mainActivityFragment);
         fragmentTransaction.commit();
 
 

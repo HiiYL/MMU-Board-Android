@@ -61,7 +61,7 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         dotView.setText(Html.fromHtml(" \u25CF "));
         titleView.setText(object.getParseObject("subject").getString("title"));
         descriptionView.setText(object.getParseObject("subject").getString("description"));
-        usernameView.setText(object.getParseObject("subject").getParseUser("createdBy").getUsername());
+        usernameView.setText(object.getParseObject("subject").getParseUser("createdBy").getString("name"));
 //        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic")
 //                .whereEqualTo("subject", ParseObject.createWithoutData("Subject",
 //                        object.getParseObject("subject").getObjectId()));

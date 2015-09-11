@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,8 @@ public class MainActivityFragment extends Fragment {
     private ListView mListView;
     private ParseQueryAdapter<ParseObject> mSubjectAdapter;
     private FloatingActionButton mCreateSubjectButton;
+    private Button joinSubjectsButton;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public MainActivityFragment() {
     }
@@ -57,14 +61,41 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mSubjectAdapter = new SubjectAdapter(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getActivity().setTitle("My Subjects");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
-        mSubjectAdapter = new SubjectAdapter(getActivity());
+        joinSubjectsButton = (Button) rootView.findViewById(R.id.join_subject_btn);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.bulletin_activity_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFromParse();
+            }
+        });
+
+        mListView.setEmptyView(rootView.findViewById(R.id.empty));
         mListView.setAdapter(mSubjectAdapter);
+
+        joinSubjectsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SubjectListFragment subjectListFragment = new SubjectListFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                fragmentTransaction.replace(R.id.frame, subjectListFragment);
+                fragmentTransaction.commit();
+            }
+        });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -93,7 +124,8 @@ public class MainActivityFragment extends Fragment {
         });
         return rootView;
     }
-    private void loadFromParse() {
+    public void loadFromParse() {
+        mSwipeRefreshLayout.setRefreshing(true);
         ParseQuery<SubjectUser> query = SubjectUser.getQuery();
 //        query.whereEqualTo("author", ParseUser.getCurrentUser());
         query.include("subject.createdBy")
@@ -119,6 +151,7 @@ public class MainActivityFragment extends Fragment {
                                                                                     public void done(com.parse.ParseException e) {
                                                                                         if(subjectUsers.get(subjectUsers.size() - 1) == subjectUser) {
                                                                                             mSubjectAdapter.loadObjects();
+                                                                                            mSwipeRefreshLayout.setRefreshing(false);
                                                                                         }
                                                                                         for(Topic topic : topics) {
                                                                                             Post.getQuery().whereEqualTo("topic", topic)

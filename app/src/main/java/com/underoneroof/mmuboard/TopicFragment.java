@@ -3,6 +3,7 @@ package com.underoneroof.mmuboard;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
@@ -72,7 +74,9 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     private FloatingActionButton mCreateSubjectButton;
 
     private List<ParseObject> topics;
-//    private List<Topic> topics;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    //    private List<Topic> topics;
     public static TopicFragment newInstance(String index, String mSubjectName) {
         TopicFragment f = new TopicFragment();
         // Supply index input as an argument.
@@ -98,13 +102,14 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mSubjectObjectId = getArguments().getString("index");
             mSubjectName = getArguments().getString("subject_name");
+            mAdapter = new TopicAdapter(getActivity(), mSubjectObjectId);
         }
 
 
     }
     @Override
     public void onResume() {
-//        loadFromParse();
+        loadFromParse();
         super.onResume();
     }
 
@@ -117,12 +122,15 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
-        mAdapter = new TopicAdapter(getActivity(), mSubjectObjectId);
         mListView.setAdapter(mAdapter);
 
-        // Set OnItemClickListener so we can be notified on item clicks
-//        topics = Topic.find(Topic.class, "subject = ? ", String.valueOf(mSubjectIndex));
-        // TODO: Change Adapter to display your content
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.bulletin_activity_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFromParse();
+            }
+        });
 
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +167,8 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PostFragment postFragment = PostFragment.newInstance(mAdapter.getItem(position).getObjectId());
+                ParseObject topic = mAdapter.getItem(position);
+                PostFragment postFragment = PostFragment.newInstance(topic.getObjectId(), topic.getString("title"));
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, postFragment);
@@ -214,6 +223,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         public void onFragmentInteraction(String id);
     }
     private void loadFromParse() {
+        mSwipeRefreshLayout.setRefreshing(true);
         Topic.getQuery()
                 .whereEqualTo("subject",ParseObject.createWithoutData("Subject", mSubjectObjectId))
         .findInBackground(new FindCallback<Topic>() {
@@ -226,6 +236,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                                 @Override
                                 public void done(com.parse.ParseException e) {
                                     mAdapter.loadObjects();
+                                    mSwipeRefreshLayout.setRefreshing(false);
                                 }
                             });
                 } else {
