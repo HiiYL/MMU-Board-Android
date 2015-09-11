@@ -3,12 +3,17 @@ package com.underoneroof.mmuboard.Adapter;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.R;
 import com.underoneroof.mmuboard.Utility.Gravatar;
@@ -33,7 +38,7 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
     public String getSubjectObjectId(int position) {
         return getItem(position).getObjectId();
     }
-    public View getItemView(ParseObject object, View v, ViewGroup parent) {
+    public View getItemView(final ParseObject object, View v, ViewGroup parent) {
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_subject_users, null);
         }
@@ -46,22 +51,29 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
 
         // Do additional configuration before returning the View.
         TextView usernameView = (TextView) v.findViewById(R.id.username);
-        TextView accessView = (TextView) v.findViewById(R.id.access_status);
+        Spinner accessView = (Spinner) v.findViewById(R.id.access_status);
+        accessView.setSelection(object.getInt("status") - 1 );
+        accessView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if((object.getInt("status") - 1) != position) {
+                    object.put("status", position + 1);
+                    object.saveEventually(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            Toast.makeText(getContext(), "Permissions saved successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         usernameView.setText(object.getParseUser("user").getUsername());
-        switch(object.getInt("status")) {
-            case 0:
-                accessView.setText("PENDING");
-                break;
-            case 1:
-                accessView.setText("MEMBER");
-                break;
-            case 2:
-                accessView.setText("ADMIN");
-                break;
-            default:
-                accessView.setText("UNKNOWN");
-                break;
-        }
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
 //        titleView.setText(object.getString("title"));
         Picasso.with(parent.getContext())

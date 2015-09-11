@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -27,6 +29,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
 
 import java.util.List;
@@ -116,7 +119,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     }
     @Override
     public void onResume() {
-//        loadFromParse();
+        loadFromParse();
         super.onResume();
     }
 
@@ -125,48 +128,6 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
-
-
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Subject");
-//        query.whereEqualTo("objectId", mSubjectObjectId);
-////        query.fromLocalDatastore();
-//        query.getInBackground(mSubjectObjectId, new GetCallback<ParseObject>() {
-//            @Override
-//            public void done(ParseObject parseObject, ParseException e) {
-//                if( e == null ) {
-//                    mSubject = parseObject;
-//                    getActivity().setTitle(mSubject.getString("title"));
-//                    ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Topic");
-//                    topic_query.whereEqualTo("subject", mSubject);
-//                    topic_query.findInBackground(new FindCallback<ParseObject>() {
-//                        @Override
-//                        public void done(List<ParseObject> list, ParseException e) {
-//                            if (e == null) {
-////                                ParseObject.pinAllInBackground(list);
-//                                Log.d("SIZE OF TOPICS", String.valueOf(list.size()));
-//                                mAdapter = new TopicAdapter(getActivity());
-//                                topics = list;
-//                                mAdapter.setData(topics);
-//                                mListView.setAdapter(mAdapter);
-//
-//                            } else {
-//                                Log.d("subject", "Error: " + e.getMessage());
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//
-//        ParseQueryAdapter.QueryFactory<Topic> factory = new ParseQueryAdapter.QueryFactory<Topic>() {
-//            public ParseQuery<Topic> create() {
-//                ParseQuery<Topic> query = Topic.getQuery();
-//                query.orderByDescending("createdAt");
-//                query.fromLocalDatastore();
-//                return query;
-//            }
-//        };
-
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
@@ -187,15 +148,6 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                         .input("Enter the title of your topic", null , new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-//                                Topic topic = new Topic(String.valueOf(input),
-//                                        "Testing",
-//                                        Subject.findById(Subject.class, mSubjectIndex),
-//                                        Session.getUser(getActivity()),
-//                                        Calendar.getInstance().get(Calendar.SECOND),
-//                                        Calendar.getInstance().get(Calendar.SECOND));
-//                                topic.save();
-//                                topics.add(topic);
-//                                mAdapter.notifyDataSetChanged();
                                 final Topic topic = new Topic();
                                 topic.put("title", String.valueOf(input).split("\\r?\\n")[0]);
                                 topic.put("description", String.valueOf(input));
@@ -221,7 +173,6 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(parent.getContext(), "SU Item Clicked", Toast.LENGTH_SHORT).show();
                 PostFragment postFragment = PostFragment.newInstance(mAdapter.getItem(position).getObjectId());
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);

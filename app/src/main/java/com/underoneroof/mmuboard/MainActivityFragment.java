@@ -67,7 +67,8 @@ public class MainActivityFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mSubjectAdapter.getItem(position).getInt("status") == 0) {
+                if(mSubjectAdapter.getItem(position).getInt("status") < 2) {
+                    Toast.makeText(getActivity(), "You do not have permission to view this topic", Toast.LENGTH_SHORT).show();
                 }else {
                     TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -93,7 +94,7 @@ public class MainActivityFragment extends Fragment {
     private void loadFromParse() {
         ParseQuery<SubjectUser> query = SubjectUser.getQuery();
 //        query.whereEqualTo("author", ParseUser.getCurrentUser());
-        query.include("subject").include("users").findInBackground(new FindCallback<SubjectUser>() {
+        query.include("subject.createdBy").findInBackground(new FindCallback<SubjectUser>() {
             @Override
             public void done(List<SubjectUser> subjects, com.parse.ParseException e) {
                 if (e == null) {

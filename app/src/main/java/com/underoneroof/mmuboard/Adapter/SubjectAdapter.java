@@ -1,15 +1,24 @@
 package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.parse.CountCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
+
+import java.util.Date;
 
 //import com.parse.ParseQueryAdapter;
 
@@ -22,9 +31,8 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
                 return ParseQuery.getQuery("SubjectUser")
-                        .include("subject")
-                        .include("user")
-                                .whereEqualTo("user", ParseUser.getCurrentUser())
+                        .include("subject.createdBy")
+                        .whereEqualTo("user", ParseUser.getCurrentUser())
                         .orderByDescending("status")
                         .fromLocalDatastore();
             }
@@ -47,17 +55,55 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         TextView titleView = (TextView) v.findViewById(R.id.info_text);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         TextView accessView = (TextView) v.findViewById(R.id.access_status);
+        final TextView userCountView = (TextView) v.findViewById(R.id.user_count);
+        final TextView topicCountView = (TextView) v.findViewById(R.id.topic_count);
+        TextView dotView = (TextView) v.findViewById(R.id.dot);
+        dotView.setText(Html.fromHtml(" \u25CF "));
         titleView.setText(object.getParseObject("subject").getString("title"));
         descriptionView.setText(object.getParseObject("subject").getString("description"));
-        usernameView.setText(object.getParseUser("user").getUsername());
+        usernameView.setText(object.getParseObject("subject").getParseUser("createdBy").getUsername());
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic")
+//                .whereEqualTo("subject", ParseObject.createWithoutData("Subject",
+//                        object.getParseObject("subject").getObjectId()));
+//        ParseQuery.getQuery("Post")
+//                .include("topic")
+//                .whereMatchesQuery("topic", query)
+//                .countInBackground(new CountCallback() {
+//                    @Override
+//                    public void done(int count, ParseException e) {
+//
+//                    }
+//                });
+        ParseQuery.getQuery("Topic")
+                .whereEqualTo("subject", Subject.createWithoutData("Subject", object.getParseObject("subject").getObjectId()))
+                .fromLocalDatastore()
+                .countInBackground(new CountCallback() {
+                            @Override
+                            public void done(int count, ParseException e) {
+                                topicCountView.setText(count + (count > 1 ? " Topics " : " Topic"));
+                            }
+                        });
+
+
+        ParseQuery.getQuery("SubjectUser")
+                .fromLocalDatastore()
+                .whereEqualTo("subject", Subject.createWithoutData("Subject", object.getParseObject("subject").getObjectId()))
+                .fromLocalDatastore()
+                .countInBackground(new CountCallback() {
+                    @Override
+                    public void done(int count, ParseException e) {
+                        userCountView.setText(count + (count > 1 ? " Users " : " User "));
+                    }
+                });
+//        timestampView.setText(object.getCreatedAt().toString());
         switch(object.getInt("status")) {
-            case 0:
+            case 1:
                 accessView.setText("PENDING");
                 break;
-            case 1:
+            case 2:
                 accessView.setText("MEMBER");
                 break;
-            case 2:
+            case 3:
                 accessView.setText("ADMIN");
                 break;
             default:

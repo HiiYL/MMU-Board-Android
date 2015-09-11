@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
         if (currentUser != null) {
             email.setText(currentUser.getEmail());
             username.setText(currentUser.getUsername());
-            Picasso.with(MainActivity.this)
-                    .load(Gravatar.gravatarUrl(currentUser.getEmail()))
-                    .into((CircleImageView) findViewById(R.id.profile_image));
+            if(currentUser.getEmail() != null ) {
+                Picasso.with(MainActivity.this)
+                        .load(Gravatar.gravatarUrl(currentUser.getEmail()))
+                        .into((CircleImageView) findViewById(R.id.profile_image));
+            }
         }
 //        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 //        if(prefs.contains("user_id")) {
@@ -103,11 +105,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                     // For rest of the options we just show a toast on click
 
                     case R.id.starred:
-//                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(intent);
-                        ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
-                        startActivityForResult(builder.build(), 0);
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+//                        ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
+//                        startActivityForResult(builder.build(), 0);
                         return true;
                     case R.id.sent_mail: {
                         ParseUser.logOut();

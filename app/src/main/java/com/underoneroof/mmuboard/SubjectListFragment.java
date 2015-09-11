@@ -47,14 +47,24 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(parent.getContext(), "SU Item Clicked", Toast.LENGTH_SHORT).show();
 
                 SubjectUser subjectUser = new SubjectUser();
                 subjectUser.put("user", ParseUser.getCurrentUser());
                 subjectUser.put("subject",
                         ParseObject.createWithoutData("Subject",
                                 mSubjectListAdapter.getItem(position).getObjectId()));
-                subjectUser.put("status", 1);
+                if(mSubjectListAdapter.getItem(position).getBoolean("isPrivate") ) {
+                    subjectUser.put("status", 1);
+                    Toast.makeText(getActivity(), "Your request to join " +
+                            mSubjectListAdapter.getItem(position).getString("title") +
+                            " is pending approval.", Toast.LENGTH_SHORT).show();
+                }else {
+                    subjectUser.put("status", 2);
+                    Toast.makeText(getActivity(), "Your request to join " +
+                            mSubjectListAdapter.getItem(position).getString("title") +
+                            " has been accepted!", Toast.LENGTH_SHORT).show();
+                }
+
                 subjectUser.saveEventually(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {

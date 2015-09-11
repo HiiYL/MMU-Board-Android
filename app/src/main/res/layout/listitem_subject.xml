@@ -15,11 +15,36 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="top|right"
         android:textSize="10sp"
-        android:layout_alignParentRight="true"
         android:id="@+id/access_status"
         android:text="ADMIN"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:orientation="horizontal"
+        >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:id="@+id/user_count"
+        android:text="0 Users "/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:textSize="10sp"
+        android:text="DOT"
+        android:id="@+id/dot"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:id="@+id/topic_count"
+        android:text=" 0 Topics "/>
+    </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"

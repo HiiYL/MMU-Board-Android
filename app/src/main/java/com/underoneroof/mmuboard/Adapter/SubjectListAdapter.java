@@ -27,8 +27,7 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
     public SubjectListAdapter(Context context) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
-                return ParseQuery.getQuery("Subject")
-                        .fromLocalDatastore();
+                return ParseQuery.getQuery("Subject");
             }
         });
     }
@@ -52,7 +51,6 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
                 .whereEqualTo("user", ParseUser.getCurrentUser())
                 .whereEqualTo("subject", Subject.createWithoutData("Subject",object.getObjectId()))
                 .fromLocalDatastore()
-                .orderByDescending("status")
                 .getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject object, ParseException e) {
@@ -60,7 +58,7 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
                             if (object != null) {
                                 switch (object.getInt("status")) {
                                     case 0:
-                                        accessBtn.setText("NOT A MEMBER");
+                                        accessBtn.setText("IZ ZEROH");
                                         break;
                                     case 1:
                                         accessBtn.setText("PENDING");
@@ -75,7 +73,11 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
                                         accessBtn.setText("UNKNOWN");
                                         break;
                                 }
+                            }else{
+                                accessBtn.setText("NOT A MEMBER");
                             }
+                        }else {
+                            accessBtn.setText("NOT A MEMBER");
                         }
                     }
                 });

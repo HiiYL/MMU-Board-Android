@@ -35,12 +35,13 @@
                 android:text="Kappa"
                 android:textSize="10sp"
                 android:id="@+id/username"/>
-            <TextView
+            <Spinner
                 android:id="@+id/access_status"
-                android:text="Approved"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:entryValues="@array/user_access_array_values"
+                android:layout_gravity="center"
+                android:entries="@array/user_access_array"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
