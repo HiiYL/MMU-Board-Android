@@ -61,15 +61,13 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
-//        mSubjectAdapter = new SubjectAdapter(getActivity());
-//        subjects = Subject.listAll(Subject.class);
         mSubjectAdapter = new SubjectAdapter(getActivity());
         mListView.setAdapter(mSubjectAdapter);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(mSubjectAdapter.getItem(position).getInt("status") == 0) {
-                    Toast.makeText(parent.getContext(), "You do not have permission to view this subject", Toast.LENGTH_SHORT).show();
                 }else {
                     TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();

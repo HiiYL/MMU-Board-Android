@@ -30,6 +30,9 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
             }
         });
     }
+    public String getSubjectObjectId(int position) {
+        return getItem(position).getObjectId();
+    }
     public View getItemView(ParseObject object, View v, ViewGroup parent) {
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_subject_users, null);

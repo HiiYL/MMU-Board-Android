@@ -12,4 +12,8 @@
     <string name="title_activity_create_post">CreatePostActivity</string>
     <string name="title_activity_login">LoginActivit</string>
     <string name="title_activity_register">RegisterActivity</string>
+
+
+    <string name="parse_app_id">mpIbcCkosC9Hk7dZFigPaNT0zRjZr838Ap5orEOv</string>
+    <string name="parse_client_key">lWRiLS1bOagSInQ5PpsXopuybetLRs0oWR3tCU7T</string>
 </resources>

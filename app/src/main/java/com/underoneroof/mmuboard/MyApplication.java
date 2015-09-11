@@ -7,6 +7,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Subject;
+import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Model.User;
 
@@ -22,6 +23,7 @@ public class MyApplication extends Application {
         ParseObject.registerSubclass(Topic.class);
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(User.class);
+        ParseObject.registerSubclass(SubjectUser.class);
 
         Parse.enableLocalDatastore(getApplicationContext());
 

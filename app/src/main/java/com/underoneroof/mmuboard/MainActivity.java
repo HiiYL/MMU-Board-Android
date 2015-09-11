@@ -103,9 +103,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                     // For rest of the options we just show a toast on click
 
                     case R.id.starred:
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+//                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+                        ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
+                        startActivityForResult(builder.build(), 0);
                         return true;
                     case R.id.sent_mail: {
                         ParseUser.logOut();

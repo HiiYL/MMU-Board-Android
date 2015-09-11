@@ -27,7 +27,8 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
     public SubjectListAdapter(Context context) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
-                return ParseQuery.getQuery("Subject");
+                return ParseQuery.getQuery("Subject")
+                        .fromLocalDatastore();
             }
         });
     }
@@ -46,7 +47,6 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
         // Do additional configuration before returning the View.
         TextView subjectView = (TextView) v.findViewById(R.id.subject_name);
         final Button accessBtn = (Button) v.findViewById(R.id.access_status);
-//        titleView.setText(object.getString("title"));
         subjectView.setText(object.getString("title"));
         ParseQuery.getQuery("SubjectUser")
                 .whereEqualTo("user", ParseUser.getCurrentUser())

@@ -100,46 +100,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
         mAdapter = new PostAdapter(getActivity(), mTopicObjectId);
         mListView.setAdapter(mAdapter);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic");
-//        query.fromLocalDatastore();
-//        query.getInBackground(mTopicObjectId, new GetCallback<ParseObject>() {
-//            @Override
-//            public void done(ParseObject parseObject, ParseException e) {
-//                if( e == null ) {
-//                    if(parseObject == null) {
-//                        Log.d("TOPIC OBJECT ID", mTopicObjectId);
-//                    }else {
-//                        mTopic = parseObject;
-//                        getActivity().setTitle(mTopic.getString("title"));
-//                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
-//                        topic_query.whereEqualTo("topic", mTopic);
-//                        topic_query.findInBackground(new FindCallback<ParseObject>() {
-//                            @Override
-//                            public void done(List<ParseObject> list, ParseException e) {
-//                                if (e == null) {
-//                                    ParseObject.pinAllInBackground(list);
-//                                    Log.d("SIZE OF POSTS", String.valueOf(list.size()));
-////                                    mAdapter = new PostAdapter(getActivity());
-////                                    posts = list;
-////                                    mAdapter.setData(posts);
-////                                    mListView.setAdapter(mAdapter);
-//
-//                                } else {
-//                                    Log.d("subject", "Error: " + e.getMessage());
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        });
-        // Set OnItemClickListener so we can be notified on item clicks
-//        posts = Post.find(Post.class, " topic = ? ",String.valueOf(mTopicIndex));
-//
-//        // TODO: Change Adapter to display your content
-//        mAdapter = new PostAdapter(getActivity());
-//        mAdapter.setData(posts);
-//        mListView.setAdapter(mAdapter);
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,15 +140,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
 
             }
         });
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                PostFragment postFragment = PostFragment.newInstance(id);
-//                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-//                fragmentTransaction.replace(R.id.frame, postFragment);
-//                fragmentTransaction.addToBackStack( "tag" ).commit();
-//            }
-//        });
 
         return view;
     }

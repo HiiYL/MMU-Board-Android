@@ -4,65 +4,36 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.SubjectListAdapter;
+import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
+import com.underoneroof.mmuboard.Model.SubjectUser;
 
+import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SubjectListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SubjectListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SubjectListFragment extends android.support.v4.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private ListView mListView;
-    private SubjectListAdapter mAdapter;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SubjectListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SubjectListFragment newInstance(String param1, String param2) {
-        SubjectListFragment fragment = new SubjectListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private SubjectListAdapter mSubjectListAdapter;
 
     public SubjectListFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -71,8 +42,31 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_subject_list, container, false);
         mListView = (ListView)view.findViewById(R.id.list);
-        mAdapter = new SubjectListAdapter(getActivity());
-        mListView.setAdapter(mAdapter);
+        mSubjectListAdapter = new SubjectListAdapter(getActivity());
+        mListView.setAdapter(mSubjectListAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(parent.getContext(), "SU Item Clicked", Toast.LENGTH_SHORT).show();
+
+                SubjectUser subjectUser = new SubjectUser();
+                subjectUser.put("user", ParseUser.getCurrentUser());
+                subjectUser.put("subject",
+                        ParseObject.createWithoutData("Subject",
+                                mSubjectListAdapter.getItem(position).getObjectId()));
+                subjectUser.put("status", 1);
+                subjectUser.saveEventually(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        loadFromParse();
+
+                    }
+                });
+                mSubjectListAdapter.loadObjects();
+                mSubjectListAdapter.notifyDataSetChanged();
+
+            }
+        });
 
         return view;
     }
@@ -114,6 +108,38 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+    private void loadFromParse() {
+        ParseQuery<SubjectUser> query = SubjectUser.getQuery();
+//        query.whereEqualTo("author", ParseUser.getCurrentUser());
+        query.include("subject").include("users").findInBackground(new FindCallback<SubjectUser>() {
+            @Override
+            public void done(List<SubjectUser> subjects, com.parse.ParseException e) {
+                if (e == null) {
+                    ParseObject.pinAllInBackground(subjects,
+                            new SaveCallback() {
+                                @Override
+                                public void done(com.parse.ParseException e) {
+                                    if (e == null) {
+                                        mSubjectListAdapter.loadObjects();
+                                    } else {
+                                        Log.i("Subject Adapter",
+                                                "Error pinning subjects: "
+                                                        + e.getMessage());
+                                    }
+                                }
+
+                                public void done(java.text.ParseException e) {
+
+                                }
+                            });
+                } else {
+                    Log.i("TodoListActivity",
+                            "loadFromParse: Error finding pinned todos: "
+                                    + e.getMessage());
+                }
+            }
+        });
     }
 
 }
