@@ -65,14 +65,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         .into((CircleImageView) findViewById(R.id.profile_image));
             }
         }
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-//        if(prefs.contains("user_id")) {
-//            User user = User.findById(User.class, prefs.getLong("user_id", 0));
-//
-//        }
-
-
-
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -125,15 +117,15 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         fragmentTransaction.replace(R.id.frame, subjectListFragment);
                         fragmentTransaction.commit();
                         return true;
-                    case R.id.allmail:
-                        Toast.makeText(getApplicationContext(),"All Mail Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.trash:
-                        Toast.makeText(getApplicationContext(),"Trash Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.spam:
-                        Toast.makeText(getApplicationContext(),"Spam Selected",Toast.LENGTH_SHORT).show();
-                        return true;
+//                    case R.id.allmail:
+//                        Toast.makeText(getApplicationContext(),"All Mail Selected",Toast.LENGTH_SHORT).show();
+//                        return true;
+//                    case R.id.trash:
+//                        Toast.makeText(getApplicationContext(),"Trash Selected",Toast.LENGTH_SHORT).show();
+//                        return true;
+//                    case R.id.spam:
+//                        Toast.makeText(getApplicationContext(),"Spam Selected",Toast.LENGTH_SHORT).show();
+//                        return true;
                     default:
                         Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
                         return true;
@@ -165,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+
 
         MainActivityFragment fragment = new MainActivityFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

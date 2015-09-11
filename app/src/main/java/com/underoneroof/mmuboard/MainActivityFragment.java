@@ -26,8 +26,10 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
+import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
+import com.underoneroof.mmuboard.Model.Topic;
 
 import java.text.ParseException;
 import java.util.List;
@@ -70,7 +72,8 @@ public class MainActivityFragment extends Fragment {
                 if(mSubjectAdapter.getItem(position).getInt("status") < 2) {
                     Toast.makeText(getActivity(), "You do not have permission to view this topic", Toast.LENGTH_SHORT).show();
                 }else {
-                    TopicFragment topicFragment = TopicFragment.newInstance(mSubjectAdapter.getItem(position).getParseObject("subject").getObjectId());
+                    ParseObject subject = mSubjectAdapter.getItem(position).getParseObject("subject");
+                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
 
@@ -89,39 +92,78 @@ public class MainActivityFragment extends Fragment {
             }
         });
         return rootView;
-
     }
     private void loadFromParse() {
         ParseQuery<SubjectUser> query = SubjectUser.getQuery();
 //        query.whereEqualTo("author", ParseUser.getCurrentUser());
-        query.include("subject.createdBy").findInBackground(new FindCallback<SubjectUser>() {
-            @Override
-            public void done(List<SubjectUser> subjects, com.parse.ParseException e) {
-                if (e == null) {
-                    ParseObject.pinAllInBackground(subjects,
-                            new SaveCallback() {
-                                @Override
-                                public void done(com.parse.ParseException e) {
-                                    if (e == null) {
-                                        mSubjectAdapter.loadObjects();
-                                    } else {
-                                        Log.i("Subject Adapter",
-                                                "Error pinning subjects: "
-                                                        + e.getMessage());
-                                    }
-                                }
-
-                                public void done(ParseException e) {
-
-                                }
-                            });
-                } else {
-                    Log.i("TodoListActivity",
-                            "loadFromParse: Error finding pinned todos: "
-                                    + e.getMessage());
-                }
-            }
-        });
+        query.include("subject.createdBy")
+                .whereEqualTo("user", ParseUser.getCurrentUser())
+                .findInBackground(new FindCallback<SubjectUser>() {
+                    @Override
+                    public void done(final List<SubjectUser> subjectUsers, com.parse.ParseException e) {
+                        if (e == null) {
+                            ParseObject.pinAllInBackground(subjectUsers,
+                                    new SaveCallback() {
+                                        @Override
+                                        public void done(com.parse.ParseException e) {
+                                            if (e == null) {
+                                                for (final SubjectUser subjectUser : subjectUsers) {
+                                                    Topic.getQuery().whereEqualTo("subject", subjectUser.getParseObject("subject"))
+                                                            .findInBackground(new FindCallback<Topic>() {
+                                                                @Override
+                                                                public void done(final List<Topic> topics, com.parse.ParseException e) {
+                                                                    if (e == null) {
+                                                                        ParseObject.pinAllInBackground(topics,
+                                                                                new SaveCallback() {
+                                                                                    @Override
+                                                                                    public void done(com.parse.ParseException e) {
+                                                                                        if(subjectUsers.get(subjectUsers.size() - 1) == subjectUser) {
+                                                                                            mSubjectAdapter.loadObjects();
+                                                                                        }
+                                                                                        for(Topic topic : topics) {
+                                                                                            Post.getQuery().whereEqualTo("topic", topic)
+                                                                                                .findInBackground(new FindCallback<Post>() {
+                                                                                                    @Override
+                                                                                                    public void done(List<Post> posts, com.parse.ParseException e) {
+                                                                                                        if (e == null) {
+                                                                                                            ParseObject.pinAllInBackground(posts,
+                                                                                                                    new SaveCallback() {
+                                                                                                                        @Override
+                                                                                                                        public void done(com.parse.ParseException e) {
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                        } else {
+                                                                                                            Log.i("Topic Adapter",
+                                                                                                                    "loadFromParse: Error finding pinned todos: "
+                                                                                                                            + e.getMessage());
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+                                                                                        }
+                                                                                    }
+                                                                                });
+                                                                    } else {
+                                                                        Log.i("Topic Adapter",
+                                                                                "loadFromParse: Error finding pinned todos: "
+                                                                                        + e.getMessage());
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                                Log.i("Subject Adapter",
+                                                        "Error pinning subjects: "
+                                                                + e.getMessage());
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Log.i("TodoListActivity",
+                                    "loadFromParse: Error finding pinned todos: "
+                                            + e.getMessage());
+                        }
+                    }
+                });
     }
     private void syncTodosToParse() {
             if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {

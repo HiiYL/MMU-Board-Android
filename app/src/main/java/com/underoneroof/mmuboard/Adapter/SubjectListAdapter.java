@@ -27,7 +27,8 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
     public SubjectListAdapter(Context context) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
-                return ParseQuery.getQuery("Subject");
+                return ParseQuery.getQuery("Subject")
+                        .fromLocalDatastore();
             }
         });
     }

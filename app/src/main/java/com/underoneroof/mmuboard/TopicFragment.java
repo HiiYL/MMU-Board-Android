@@ -52,6 +52,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
     // TODO: Rename and change types of parameters
     private String mSubjectObjectId;
+    private String mSubjectName;
     private ParseObject mSubject;
     private String mParam2;
 //    private long mSubjectIndex;
@@ -72,29 +73,12 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
     private List<ParseObject> topics;
 //    private List<Topic> topics;
-
-    // TODO: Rename and change types of parameters
-    public static TopicFragment newInstance(String param1, String param2) {
-        TopicFragment fragment = new TopicFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    public static TopicFragment newInstance(long index) {
-        TopicFragment f = new TopicFragment();
-        // Supply index input as an argument.
-        Bundle args = new Bundle();
-        args.putLong("index", index);
-        f.setArguments(args);
-        return f;
-    }
-    public static TopicFragment newInstance(String index) {
+    public static TopicFragment newInstance(String index, String mSubjectName) {
         TopicFragment f = new TopicFragment();
         // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putString("index", index);
+        args.putString("subject_name",mSubjectName);
         f.setArguments(args);
         return f;
     }
@@ -113,19 +97,21 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         setHasOptionsMenu(true);
         if (getArguments() != null) {
             mSubjectObjectId = getArguments().getString("index");
+            mSubjectName = getArguments().getString("subject_name");
         }
 
 
     }
     @Override
     public void onResume() {
-        loadFromParse();
+//        loadFromParse();
         super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle(mSubjectName);
 
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
         // Set the adapter
@@ -228,11 +214,13 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         public void onFragmentInteraction(String id);
     }
     private void loadFromParse() {
-        ParseQuery<Topic> query = Topic.getQuery();
-        query.findInBackground(new FindCallback<Topic>() {
+        Topic.getQuery()
+                .whereEqualTo("subject",ParseObject.createWithoutData("Subject", mSubjectObjectId))
+        .findInBackground(new FindCallback<Topic>() {
             @Override
             public void done(List<Topic> topics, com.parse.ParseException e) {
                 if (e == null) {
+
                     ParseObject.pinAllInBackground(topics,
                             new SaveCallback() {
                                 @Override

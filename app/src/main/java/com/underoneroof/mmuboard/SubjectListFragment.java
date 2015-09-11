@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -37,6 +39,12 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadFromParse();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -46,34 +54,64 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         mListView.setAdapter(mSubjectListAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
+                view.setEnabled(false);
+                SubjectUser.getQuery()
+                        .whereEqualTo("user", ParseUser.getCurrentUser())
+                        .fromLocalDatastore()
+                        .whereEqualTo("subject", ParseObject.createWithoutData("Subject",
+                                mSubjectListAdapter.getItem(position).getObjectId()))
+                        .getFirstInBackground(new GetCallback<SubjectUser>() {
+                            @Override
+                            public void done(SubjectUser object, ParseException e) {
+                                if (e == null) {
+                                    if (object.getInt("status") != 1) {
+                                        ParseObject subject = object.getParseObject("subject");
+                                        TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(),subject.getString("title"));
+                                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                                        fragmentTransaction.replace(R.id.frame, topicFragment);
+                                        fragmentTransaction.addToBackStack("tag").commit();
+                                    }else {
+                                        Toast.makeText(getActivity(), "Your request to join is still pending approval.", Toast.LENGTH_SHORT).show();
+                                    }
+                                    //object exists
+                                } else {
+                                    if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                                        SubjectUser subjectUser = new SubjectUser();
+                                        subjectUser.put("user", ParseUser.getCurrentUser());
+                                        subjectUser.put("subject",
+                                                ParseObject.createWithoutData("Subject",
+                                                        mSubjectListAdapter.getItem(position).getObjectId()));
+                                        if (mSubjectListAdapter.getItem(position).getBoolean("isPrivate")) {
+                                            subjectUser.put("status", 1);
+                                            Toast.makeText(getActivity(), "Your request to join " +
+                                                    mSubjectListAdapter.getItem(position).getString("title") +
+                                                    " is pending approval.", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            subjectUser.put("status", 2);
+                                            Toast.makeText(getActivity(), "Your request to join " +
+                                                    mSubjectListAdapter.getItem(position).getString("title") +
+                                                    " has been accepted!", Toast.LENGTH_SHORT).show();
+                                        }
 
-                SubjectUser subjectUser = new SubjectUser();
-                subjectUser.put("user", ParseUser.getCurrentUser());
-                subjectUser.put("subject",
-                        ParseObject.createWithoutData("Subject",
-                                mSubjectListAdapter.getItem(position).getObjectId()));
-                if(mSubjectListAdapter.getItem(position).getBoolean("isPrivate") ) {
-                    subjectUser.put("status", 1);
-                    Toast.makeText(getActivity(), "Your request to join " +
-                            mSubjectListAdapter.getItem(position).getString("title") +
-                            " is pending approval.", Toast.LENGTH_SHORT).show();
-                }else {
-                    subjectUser.put("status", 2);
-                    Toast.makeText(getActivity(), "Your request to join " +
-                            mSubjectListAdapter.getItem(position).getString("title") +
-                            " has been accepted!", Toast.LENGTH_SHORT).show();
-                }
+                                        subjectUser.saveEventually(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                loadFromParse();
 
-                subjectUser.saveEventually(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        loadFromParse();
+                                            }
+                                        });
+                                        mSubjectListAdapter.loadObjects();
+                                        mSubjectListAdapter.notifyDataSetChanged();
+                                        //object doesn't exist
+                                    } else {
+                                        Toast.makeText(getActivity(), "UHOH SOMETHING BAD HAPPENED", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
 
-                    }
-                });
-                mSubjectListAdapter.loadObjects();
-                mSubjectListAdapter.notifyDataSetChanged();
 
             }
         });
@@ -81,7 +119,6 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -104,19 +141,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         super.onDetach();
         mListener = null;
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
     private void loadFromParse() {

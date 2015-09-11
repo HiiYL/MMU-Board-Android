@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A CardView that contains a TextView -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
@@ -25,24 +24,24 @@
         android:layout_gravity="bottom|right"
         android:orientation="horizontal"
         >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:id="@+id/user_count"
-        android:text="0 Users "/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:textSize="10sp"
-        android:id="@+id/dot"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:id="@+id/topic_count"
-        android:text=" 0 Topics "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:id="@+id/user_count"
+            android:text="0 Users "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:textSize="10sp"
+            android:id="@+id/dot"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:id="@+id/topic_count"
+            android:text=" 0 Posts "/>
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
@@ -53,11 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Started by "
-            android:textSize="10sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Started by "
+                android:textSize="10sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,17 +67,17 @@
         </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/info_text"
-        android:layout_width="wrap_content"
-        android:textStyle="bold"
-        android:text="Title"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/description_text"
-        android:text="Contents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/info_text"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:text="Title"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/description_text"
+            android:text="Contents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
