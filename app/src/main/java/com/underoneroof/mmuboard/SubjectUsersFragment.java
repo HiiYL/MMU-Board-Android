@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListView;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
 public class SubjectUsersFragment extends android.support.v4.app.Fragment {
@@ -40,6 +46,21 @@ public class SubjectUsersFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mSubjectObjectId = getArguments().getString(ARG_PARAM1);
+            mSubjectUsersAdapter = new SubjectUsersAdapter(getActivity(), mSubjectObjectId);
+            ParseQuery.getQuery("SubjectUser")
+                    .whereEqualTo("user", ParseUser.getCurrentUser())
+                    .whereEqualTo("subject", ParseObject.createWithoutData("Subject", mSubjectObjectId))
+                    .whereEqualTo("status", 3)
+                    .fromLocalDatastore()
+                    .getFirstInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject object, ParseException e) {
+                            if(object != null) {
+                                mSubjectUsersAdapter.enableSpinner();
+                                Log.d("SPINNER", "SPINNER ENABLED");
+                            }
+                        }
+                    });
         }
     }
 
@@ -49,7 +70,6 @@ public class SubjectUsersFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_subject_users, container, false);
         mListView = (GridView) view.findViewById(android.R.id.list);
-        mSubjectUsersAdapter = new SubjectUsersAdapter(getActivity(), mSubjectObjectId);
         mListView.setAdapter(mSubjectUsersAdapter);
 
 

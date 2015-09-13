@@ -24,6 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Hii on 10/09/2015.
  */
 public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
+    boolean mSpinnerEnabled = false;
     public SubjectUsersAdapter(Context context, final String subjectObjectId) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
@@ -35,8 +36,9 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
             }
         });
     }
-    public String getSubjectObjectId(int position) {
-        return getItem(position).getObjectId();
+    public void enableSpinner() {
+        mSpinnerEnabled = true;
+        loadObjects();
     }
     public View getItemView(final ParseObject object, View v, ViewGroup parent) {
         if (v == null) {
@@ -50,6 +52,7 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
 //        super.getItemView(object, v, parent);
 
         // Do additional configuration before returning the View.
+
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         Spinner accessView = (Spinner) v.findViewById(R.id.access_status);
         accessView.setSelection(object.getInt("status") - 1 );
@@ -73,6 +76,10 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
 
             }
         });
+        if(!mSpinnerEnabled || (object.getInt("status") == 3)) {
+            accessView.setEnabled(false);
+            accessView.setClickable(false);
+        }
         usernameView.setText(object.getParseUser("user").getString("name"));
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
 //        titleView.setText(object.getString("title"));

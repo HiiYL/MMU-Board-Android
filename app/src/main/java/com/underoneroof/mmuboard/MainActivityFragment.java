@@ -136,7 +136,7 @@ public class MainActivityFragment extends Fragment {
                                      }
                                  });
         SubjectUser.getQuery().include("subject.createdBy")
-//                .whereEqualTo("user", ParseUser.getCurrentUser())
+                .whereEqualTo("user", ParseUser.getCurrentUser())
                 .findInBackground(new FindCallback<SubjectUser>() {
                     @Override
                     public void done(final List<SubjectUser> objects, com.parse.ParseException e) {

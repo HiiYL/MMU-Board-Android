@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -95,10 +96,11 @@ public class PostFragment extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         mListView = (ListView) view.findViewById(android.R.id.list);
 
-
+        mListView.setEmptyView(view.findViewById(R.id.empty));
         mListView.setAdapter(mAdapter);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
-        mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
+        Button emptyCreateSubjectButton = (Button) view.findViewById(R.id.empty_create_post_btn);
+        View.OnClickListener createSubjectButtonClickListener =  new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new MaterialDialog.Builder(getActivity())
@@ -135,9 +137,10 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                 mAdapter.notifyDataSetChanged();
                             }
                         }).show();
-
             }
-        });
+        };
+        mCreateSubjectButton.setOnClickListener(createSubjectButtonClickListener);
+        emptyCreateSubjectButton.setOnClickListener(createSubjectButtonClickListener);
         return view;
     }
 

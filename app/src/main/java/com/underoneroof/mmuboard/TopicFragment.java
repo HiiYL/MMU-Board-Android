@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,6 +127,8 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_topic, container, false);
         // Set the adapter
         mListView = (ListView) view.findViewById(android.R.id.list);
+        mListView.setEmptyView(view.findViewById(R.id.empty));
+        Button emptyCreateTopicButton = (Button) view.findViewById(R.id.empty_create_topic_btn);
         mCreateSubjectButton = (FloatingActionButton) view.findViewById(R.id.create_topic_btn);
         mListView.setAdapter(mAdapter);
 
@@ -137,7 +140,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener createSubjectButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new MaterialDialog.Builder(getActivity())
@@ -168,7 +171,11 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                         }).show();
 
             }
-        });
+        };
+
+        mCreateSubjectButton.setOnClickListener(createSubjectButtonListener);
+        emptyCreateTopicButton.setOnClickListener(createSubjectButtonListener);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

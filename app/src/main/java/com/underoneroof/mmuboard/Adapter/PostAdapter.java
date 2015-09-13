@@ -88,7 +88,7 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         }
         likeCountView.setText(like_count > 1 ?
                 like_count + " users like this post" :
-                like_count + " user like this post");
+                like_count + " user likes this post");
 
 
 

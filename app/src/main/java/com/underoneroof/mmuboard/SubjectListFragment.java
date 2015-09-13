@@ -60,7 +60,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
-                view.setEnabled(false);
+                view.setClickable(false);
                 SubjectUser.getQuery()
                         .whereEqualTo("user", ParseUser.getCurrentUser())
                         .fromLocalDatastore()
@@ -104,12 +104,10 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                             @Override
                                             public void done(ParseException e) {
                                                 loadFromParse();
-
+                                                view.setClickable(true);
                                             }
                                         });
                                         mSubjectListAdapter.loadObjects();
-                                        mSubjectListAdapter.notifyDataSetChanged();
-                                        //object doesn't exist
                                     } else {
                                         Toast.makeText(getActivity(), "UHOH SOMETHING BAD HAPPENED", Toast.LENGTH_SHORT).show();
                                     }
@@ -149,6 +147,41 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
     }
+    private void loadSubjectUsers() {
+//        mSwipeRefreshLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//            }
+//        });
+        SubjectUser.getQuery().include("subject.createdBy")
+                .whereEqualTo("user", ParseUser.getCurrentUser())
+                .findInBackground(new FindCallback<SubjectUser>() {
+                    @Override
+                    public void done(final List<SubjectUser> objects, com.parse.ParseException e) {
+                        if (e == null) {
+                            ParseObject.unpinAllInBackground("SubjectAdapter", new DeleteCallback() {
+                                @Override
+                                public void done(com.parse.ParseException e) {
+                                    if (e == null) {
+                                        ParseObject.pinAllInBackground("Subject Adapter", objects, new SaveCallback() {
+                                            @Override
+                                            public void done(com.parse.ParseException e) {
+                                                mSubjectListAdapter.loadObjects();
+                                                mSubjectListAdapter.notifyDataSetChanged();
+//                                                mSwipeRefreshLayout.setRefreshing(false);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.e("Subject Adapter", "Find Error");
+                        }
+
+                    }
+                });
+    }
     private void loadFromParse() {
         Subject.getQuery().findInBackground(new FindCallback<Subject>() {
             @Override
@@ -163,7 +196,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                             @Override
                                             public void done(com.parse.ParseException e) {
                                                 if (e == null) {
-                                                    mSubjectListAdapter.loadObjects();
+                                                    loadSubjectUsers();
                                                 } else {
                                                     Log.i("Subject Adapter",
                                                             "Error pinning subjects: "

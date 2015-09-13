@@ -43,7 +43,6 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
 //        super.getItemView(object, v, parent);
 
         // Do additional configuration before returning the View.
-        TextView descriptionView = (TextView) v.findViewById(R.id.description_text);
         TextView titleView = (TextView) v.findViewById(R.id.info_text);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         final TextView postCountView = (TextView) v.findViewById(R.id.post_count);
@@ -53,7 +52,6 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
         postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post "));
 
         titleView.setText(object.getString("title"));
-        descriptionView.setText(object.getString("description"));
         usernameView.setText(object.getParseUser("createdBy").getString("name"));
         return v;
     }
