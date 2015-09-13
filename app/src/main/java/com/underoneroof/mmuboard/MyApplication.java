@@ -6,6 +6,7 @@ import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Subject;
@@ -27,9 +28,11 @@ public class MyApplication extends Application {
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(SubjectUser.class);
 
+
         Parse.enableLocalDatastore(getApplicationContext());
 
         Parse.initialize(this, "mpIbcCkosC9Hk7dZFigPaNT0zRjZr838Ap5orEOv", "lWRiLS1bOagSInQ5PpsXopuybetLRs0oWR3tCU7T");
         ParseInstallation.getCurrentInstallation().saveInBackground();
+
     }
 }

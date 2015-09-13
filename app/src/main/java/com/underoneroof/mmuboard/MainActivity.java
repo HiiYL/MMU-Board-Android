@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             }
         }
         if(mainActivityFragment != null) {
-            mainActivityFragment.loadFromParse();
+            mainActivityFragment.loadAllFromParse();
         }else {
             Log.e("MAIN ACTIVITY FRAGMENT", "mainActivityFragment IS NULL");
         }
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(ParseUser.getCurrentUser() == null) {
             ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
             startActivityForResult(builder.build(), 0);
@@ -125,14 +127,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         return true;
 
                     // For rest of the options we just show a toast on click
-
-                    case R.id.starred:
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-//                        ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
-//                        startActivityForResult(builder.build(), 0);
-                        return true;
                     case R.id.sent_mail: {
                         ParseUser.logOut();
                         Intent new_intent = getIntent();

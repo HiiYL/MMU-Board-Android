@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
@@ -30,9 +31,11 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
+import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
+import com.underoneroof.mmuboard.Utility.Utility;
 
 import java.util.List;
 
@@ -82,7 +85,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putString("index", index);
-        args.putString("subject_name",mSubjectName);
+        args.putString("subject_name", mSubjectName);
         f.setArguments(args);
         return f;
     }
@@ -104,12 +107,14 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             mSubjectName = getArguments().getString("subject_name");
             mAdapter = new TopicAdapter(getActivity(), mSubjectObjectId);
         }
-
-
     }
     @Override
     public void onResume() {
-        loadFromParse();
+        if(Utility.isConnectedToNetwork(getActivity())) {
+            loadFromParse(mSubjectObjectId);
+        }else {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
         super.onResume();
     }
 
@@ -128,7 +133,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadFromParse();
+                loadFromParse(mSubjectObjectId);
             }
         });
 
@@ -151,7 +156,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            loadFromParse();
+                                            loadFromParse(mSubjectObjectId);
                                         } else {
                                             Log.d("COUNT OF ADAPTER", "EROR?");
                                         }
@@ -222,31 +227,84 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
-    private void loadFromParse() {
-        mSwipeRefreshLayout.setRefreshing(true);
+    private void loadFromParse(final String subjectObjectId) {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         Topic.getQuery()
-                .whereEqualTo("subject",ParseObject.createWithoutData("Subject", mSubjectObjectId))
+                .include("createdBy")
+                .whereEqualTo("subject", ParseObject.createWithoutData("Subject", subjectObjectId))
         .findInBackground(new FindCallback<Topic>() {
             @Override
-            public void done(List<Topic> topics, com.parse.ParseException e) {
+            public void done(final List<Topic> topics, com.parse.ParseException e) {
                 if (e == null) {
+                    ParseObject.unpinAllInBackground("Topic Adapter" + subjectObjectId, new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                ParseObject.pinAllInBackground("Topic Adapter" + subjectObjectId, topics,
+                                        new SaveCallback() {
+                                            @Override
+                                            public void done(com.parse.ParseException e) {
+                                                mAdapter.loadObjects();
+                                                mSwipeRefreshLayout.setRefreshing(false);
+                                            }
+                                        });
+                            } else {
+                                Log.e("Topic Adapter" + subjectObjectId,
+                                        "loadFromParse: Error finding pinned todos: "
+                                                + e.getMessage());
+                            }
 
-                    ParseObject.pinAllInBackground(topics,
-                            new SaveCallback() {
-                                @Override
-                                public void done(com.parse.ParseException e) {
-                                    mAdapter.loadObjects();
-                                    mSwipeRefreshLayout.setRefreshing(false);
-                                }
-                            });
+                        }
+                    });
                 } else {
-                    Log.i("Topic Adapter",
-                            "loadFromParse: Error finding pinned todos: "
-                                    + e.getMessage());
+                    Log.e("Topic Adapter" + subjectObjectId, "DELETE FAILED");
+
                 }
+
             }
         });
     }
+//    void loadPosts(final List<Topic> topics) {
+//        for(final Topic topic : topics) {
+//            Post.getQuery().whereEqualTo("topic", topic)
+//                    .findInBackground(new FindCallback<Post>() {
+//                        @Override
+//                        public void done(final List<Post> posts, com.parse.ParseException e) {
+//                            final String topicObjectId = topic.getObjectId();
+//                            if (e == null) {
+//                                ParseObject.unpinAllInBackground("PostAdapter" + topicObjectId, new DeleteCallback() {
+//                                    @Override
+//                                    public void done(com.parse.ParseException e) {
+//                                        if (e == null) {
+//                                            ParseObject.pinAllInBackground("PostAdapter" + topicObjectId, posts,
+//                                                    new SaveCallback() {
+//                                                        @Override
+//                                                        public void done(com.parse.ParseException e) {
+//                                                            if(topic == topics.get(topics.size() - 1) ) {
+//                                                                mAdapter.loadObjects();
+//                                                                mSwipeRefreshLayout.setRefreshing(false);
+//                                                            }
+//                                                        }
+//                                                    });
+//                                        } else {
+//                                            Log.e("Post Adapter" + topicObjectId, "DELETION FAILED");
+//                                        }
+//                                    }
+//                                });
+//                            } else {
+//                                Log.i("Topic Adapter",
+//                                        "loadFromParse: Error finding pinned todos: "
+//                                                + e.getMessage());
+//                            }
+//                        }
+//                    });
+//        }
+//    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_subject_users, menu);

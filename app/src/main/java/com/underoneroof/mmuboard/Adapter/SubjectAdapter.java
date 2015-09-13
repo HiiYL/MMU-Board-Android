@@ -59,43 +59,14 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         final TextView topicCountView = (TextView) v.findViewById(R.id.topic_count);
         TextView dotView = (TextView) v.findViewById(R.id.dot);
         dotView.setText(Html.fromHtml(" \u25CF "));
-        titleView.setText(object.getParseObject("subject").getString("title"));
-        descriptionView.setText(object.getParseObject("subject").getString("description"));
-        usernameView.setText(object.getParseObject("subject").getParseUser("createdBy").getString("name"));
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Topic")
-//                .whereEqualTo("subject", ParseObject.createWithoutData("Subject",
-//                        object.getParseObject("subject").getObjectId()));
-//        ParseQuery.getQuery("Post")
-//                .include("topic")
-//                .whereMatchesQuery("topic", query)
-//                .countInBackground(new CountCallback() {
-//                    @Override
-//                    public void done(int count, ParseException e) {
-//
-//                    }
-//                });
-        ParseQuery.getQuery("Topic")
-                .whereEqualTo("subject", Subject.createWithoutData("Subject", object.getParseObject("subject").getObjectId()))
-                .fromLocalDatastore()
-                .countInBackground(new CountCallback() {
-                            @Override
-                            public void done(int count, ParseException e) {
-                                topicCountView.setText(count + (count > 1 ? " Topics " : " Topic"));
-                            }
-                        });
-
-
-        ParseQuery.getQuery("SubjectUser")
-                .fromLocalDatastore()
-                .whereEqualTo("subject", Subject.createWithoutData("Subject", object.getParseObject("subject").getObjectId()))
-                .fromLocalDatastore()
-                .countInBackground(new CountCallback() {
-                    @Override
-                    public void done(int count, ParseException e) {
-                        userCountView.setText(count + (count > 1 ? " Users " : " User "));
-                    }
-                });
-//        timestampView.setText(object.getCreatedAt().toString());
+        ParseObject subject =  object.getParseObject("subject");
+        titleView.setText(subject.getString("title"));
+        descriptionView.setText(subject.getString("description"));
+        usernameView.setText(subject.getParseUser("createdBy").getString("name"));
+        long topic_count = subject.getLong("topic_count");
+        long user_count = subject.getLong("user_count");
+        topicCountView.setText( topic_count + (topic_count > 1 ? " Topics " : " Topic"));
+        userCountView.setText(user_count + (user_count > 1 ? " Users " : " User "));
         switch(object.getInt("status")) {
             case 1:
                 accessView.setText("PENDING");

@@ -13,17 +13,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.SubjectListAdapter;
 import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
+import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
 
 import java.util.List;
@@ -40,8 +44,8 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
         loadFromParse();
+        super.onResume();
     }
 
     @Override
@@ -146,34 +150,44 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         public void onFragmentInteraction(Uri uri);
     }
     private void loadFromParse() {
-        ParseQuery<SubjectUser> query = SubjectUser.getQuery();
-//        query.whereEqualTo("author", ParseUser.getCurrentUser());
-        query.include("subject").include("users").findInBackground(new FindCallback<SubjectUser>() {
+        Subject.getQuery().findInBackground(new FindCallback<Subject>() {
             @Override
-            public void done(List<SubjectUser> subjects, com.parse.ParseException e) {
+            public void done(final List<Subject> subjects, com.parse.ParseException e) {
                 if (e == null) {
-                    ParseObject.pinAllInBackground(subjects,
-                            new SaveCallback() {
-                                @Override
-                                public void done(com.parse.ParseException e) {
-                                    if (e == null) {
-                                        mSubjectListAdapter.loadObjects();
-                                    } else {
-                                        Log.i("Subject Adapter",
-                                                "Error pinning subjects: "
-                                                        + e.getMessage());
-                                    }
-                                }
+                    ParseObject.unpinAllInBackground("SubjectList", new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                ParseObject.pinAllInBackground("SubjectList", subjects,
+                                        new SaveCallback() {
+                                            @Override
+                                            public void done(com.parse.ParseException e) {
+                                                if (e == null) {
+                                                    mSubjectListAdapter.loadObjects();
+                                                } else {
+                                                    Log.i("Subject Adapter",
+                                                            "Error pinning subjects: "
+                                                                    + e.getMessage());
+                                                }
+                                            }
 
-                                public void done(java.text.ParseException e) {
+                                            public void done(java.text.ParseException e) {
 
-                                }
-                            });
-                } else {
-                    Log.i("TodoListActivity",
-                            "loadFromParse: Error finding pinned todos: "
-                                    + e.getMessage());
+                                            }
+                                        });
+                            } else {
+                                Log.i("TodoListActivity",
+                                        "loadFromParse: Error finding pinned todos: "
+                                                + e.getMessage());
+                            }
+
+                        }
+                    });
+                }else {
+                    Log.e("SUBJECTLIST", e.toString());
                 }
+
+
             }
         });
     }

@@ -33,7 +33,7 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
     @Override
     public View getItemView(ParseObject object, View v, ViewGroup parent) {
         if (v == null) {
-            v = View.inflate(getContext(), R.layout.listitem_subject, null);
+            v = View.inflate(getContext(), R.layout.listitem_topic, null);
         }
 
         // Take advantage of ParseQueryAdapter's getItemView logic for
@@ -46,22 +46,12 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
         TextView descriptionView = (TextView) v.findViewById(R.id.description_text);
         TextView titleView = (TextView) v.findViewById(R.id.info_text);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
-        TextView accessView = (TextView) v.findViewById(R.id.access_status);
-        final TextView userCountView = (TextView) v.findViewById(R.id.user_count);
-        final TextView topicCountView = (TextView) v.findViewById(R.id.topic_count);
-        TextView dotView = (TextView) v.findViewById(R.id.dot);
-        dotView.setText(Html.fromHtml(" \u25CF "));
+        final TextView postCountView = (TextView) v.findViewById(R.id.post_count);
 
-        ParseQuery.getQuery("Post")
-                .fromLocalDatastore()
-                .whereEqualTo("topic", Topic.createWithoutData("Topic", object.getObjectId()))
-                .fromLocalDatastore()
-                .countInBackground(new CountCallback() {
-                    @Override
-                    public void done(int count, ParseException e) {
-                        topicCountView.setText(count + (count > 1 ? " Posts " : " Post "));
-                    }
-                });
+        long post_count = object.getLong("post_count");
+
+        postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post "));
+
         titleView.setText(object.getString("title"));
         descriptionView.setText(object.getString("description"));
         usernameView.setText(object.getParseUser("createdBy").getString("name"));
