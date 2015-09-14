@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == LOGIN_ACTIVITY_RESULT_CODE) {
-            Log.d("MyApp", "onActivityResult in LoginActivity is called");
+            Log.d("MyApp", "onActivityResult in MainActivity is called");
             email = (TextView) findViewById(R.id.email);
             username = (TextView) findViewById(R.id.username);
             ParseUser currentUser = ParseUser.getCurrentUser();
