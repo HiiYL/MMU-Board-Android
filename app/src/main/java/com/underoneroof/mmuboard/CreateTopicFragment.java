@@ -18,11 +18,15 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Model.Post;
+import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
@@ -33,8 +37,9 @@ import com.underoneroof.mmuboard.Utility.Utility;
  * create an instance of this fragment.
  */
 public class CreateTopicFragment extends android.support.v4.app.Fragment {
-    private static final String ARG_SUBJECT_OBJECT_ID = "subject_object";
+    private static final String ARG_SUBJECT_OBJECT_ID = "subject_object_id";
     private static final int TOPIC_PHOTO_PICKER_ID = 3;
+    private static final String ARG_SUBJECT_NAME = "subject_name";
 
     private String mSubjectObjectId;
     private Button submitBtn;
@@ -43,6 +48,7 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
     private ImageView imagePreviewView;
     private Post post;
     private Topic topic;
+    private String mSubjectName;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -81,10 +87,11 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
             }
         }
     }
-    public static CreateTopicFragment newInstance(String param1) {
+    public static CreateTopicFragment newInstance(String param1, String params2) {
         CreateTopicFragment fragment = new CreateTopicFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SUBJECT_OBJECT_ID, param1);
+        args.putString(ARG_SUBJECT_NAME, params2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,6 +105,7 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mSubjectObjectId = getArguments().getString(ARG_SUBJECT_OBJECT_ID);
+            mSubjectName = getArguments().getString(ARG_SUBJECT_NAME);
         }
     }
 
@@ -119,12 +127,23 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
         uploadImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent,
-                        "Complete action using"), TOPIC_PHOTO_PICKER_ID);
+                Intent getIntent = new Intent();
+                getIntent.setType("image/*");
+                getIntent.setAction(Intent.ACTION_GET_CONTENT);
+//                getIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                pickIntent.setType("image/*");
+
+
+                Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+                try {
+                    startActivityForResult(pickIntent, TOPIC_PHOTO_PICKER_ID);
+                }catch(Exception e) {
+                    startActivityForResult(getIntent, TOPIC_PHOTO_PICKER_ID);
+                }
+//                startActivityForResult(Intent.createChooser(intent,
+//                        "Complete action using"), TOPIC_PHOTO_PICKER_ID);
             }
         });
         submitBtn.setOnClickListener(new View.OnClickListener() {
@@ -146,9 +165,19 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
                             post.put("contents", sContents);
                             post.put("createdBy", ParseUser.getCurrentUser());
                             post.put("topic", ParseObject.createWithoutData("Topic", topic.getObjectId()));
+
                             post.saveEventually(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
+                                    ParseQuery pushQuery = ParseInstallation.getQuery();
+                                    pushQuery.whereEqualTo("subjects",
+                                            ParseInstallation.createWithoutData("Subject", mSubjectObjectId))
+                                    .whereNotEqualTo("user", ParseUser.getCurrentUser());
+                                    ParsePush push = new ParsePush();
+                                    push.setQuery(pushQuery); // Set our Installation query
+                                    push.setMessage(ParseUser.getCurrentUser().getUsername()
+                                            + " submitted a topic to #" + mSubjectName);
+                                    push.sendInBackground();
                                     Toast.makeText(getActivity(), "Post saved successfully", Toast.LENGTH_SHORT).show();
                                     getFragmentManager().popBackStack();
                                 }

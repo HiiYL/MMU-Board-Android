@@ -18,6 +18,7 @@ import com.underoneroof.mmuboard.R;
 
 /**
  * Created by Hii on 09/09/2015.
+ *
  */
 public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
     public TopicAdapter(Context context, final String subjectObjectId) {
@@ -35,12 +36,6 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_topic, null);
         }
-
-        // Take advantage of ParseQueryAdapter's getItemView logic for
-        // populating the main TextView/ImageView.
-        // The IDs in your custom layout must match what ParseQueryAdapter expects
-        // if it will be populating a TextView or ImageView for you.
-//        super.getItemView(object, v, parent);
 
         // Do additional configuration before returning the View.
         TextView titleView = (TextView) v.findViewById(R.id.info_text);

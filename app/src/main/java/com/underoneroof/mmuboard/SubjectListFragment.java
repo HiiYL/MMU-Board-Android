@@ -1,6 +1,7 @@
 package com.underoneroof.mmuboard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -29,6 +30,7 @@ import com.underoneroof.mmuboard.Adapter.SubjectListAdapter;
 import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
+import com.underoneroof.mmuboard.Utility.Utility;
 
 import java.util.List;
 
@@ -72,18 +74,17 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                 if (e == null) {
                                     if (object.getInt("status") != 1) {
                                         ParseObject subject = object.getParseObject("subject");
-                                        TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(),subject.getString("title"));
+                                        TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
                                         android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                                         fragmentTransaction.replace(R.id.frame, topicFragment);
                                         fragmentTransaction.addToBackStack("tag").commit();
-                                    }else {
+                                    } else {
                                         Toast.makeText(getActivity(), "Your request to join is still pending approval.", Toast.LENGTH_SHORT).show();
                                     }
-                                    //object exists
                                 } else {
                                     if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-                                        ParseObject subject = mSubjectListAdapter.getItem(position);
+                                        final ParseObject subject = mSubjectListAdapter.getItem(position);
                                         final SubjectUser subjectUser = new SubjectUser();
                                         subjectUser.put("user", ParseUser.getCurrentUser());
                                         subjectUser.put("subject",
@@ -104,10 +105,9 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                         subjectUser.saveEventually(new SaveCallback() {
                                             @Override
                                             public void done(ParseException e) {
-                                                if(subjectUser.getInt("status") != 1) {
+                                                if (subjectUser.getInt("status") != 1) {
 //                                                    view.setClickable(true);
                                                     loadFromParse();
-                                                    ParseObject subject = subjectUser.getParseObject("subject");
                                                     TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
                                                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                                     fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
@@ -138,16 +138,17 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        Activity a;
+//
+//        if (context instanceof Activity){
+//            a=(Activity) context;
+//        }
+//
+//    }
 
     @Override
     public void onDetach() {
@@ -155,7 +156,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
     public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
     private void loadSubjectUsers() {
 //        mSwipeRefreshLayout.post(new Runnable() {

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseAnonymousUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -48,7 +50,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == LOGIN_ACTIVITY_RESULT_CODE) {
+        if(requestCode == LOGIN_ACTIVITY_RESULT_CODE) {
+            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+            parseInstallation.remove("user");
+            parseInstallation.add("user", ParseUser.getCurrentUser());
+            parseInstallation.saveInBackground();
             Log.d("MyApp", "onActivityResult in MainActivity is called");
             email = (TextView) findViewById(R.id.email);
             username = (TextView) findViewById(R.id.username);
@@ -121,9 +127,11 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.my_subjects:
                         MainActivityFragment mainActivityFragment = new MainActivityFragment();
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                                 .replace(R.id.frame, mainActivityFragment)
                                 .commit();
                         return true;
@@ -137,21 +145,13 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         return true;
                     }
                     case R.id.drafts:
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         SubjectListFragment subjectListFragment = new SubjectListFragment();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                         fragmentTransaction.replace(R.id.frame, subjectListFragment);
                         fragmentTransaction.commit();
                         return true;
-//                    case R.id.allmail:
-//                        Toast.makeText(getApplicationContext(),"All Mail Selected",Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.trash:
-//                        Toast.makeText(getApplicationContext(),"Trash Selected",Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.spam:
-//                        Toast.makeText(getApplicationContext(),"Spam Selected",Toast.LENGTH_SHORT).show();
-//                        return true;
                     default:
                         Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
                         return true;
@@ -190,32 +190,10 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
         fragmentTransaction.replace(R.id.frame, mainActivityFragment);
         fragmentTransaction.commit();
-
-
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onFragmentInteraction(String id) {

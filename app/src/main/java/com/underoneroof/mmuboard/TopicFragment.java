@@ -25,6 +25,7 @@ import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -38,6 +39,7 @@ import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,6 +61,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mSubjectObjectId;
     private String mSubjectName;
+    private boolean mPushEnabled = false;
     private ParseObject mSubject;
     private String mParam2;
 //    private long mSubjectIndex;
@@ -79,6 +82,9 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
     private List<ParseObject> topics;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+
+    private MenuItem mPushEnabledMenuItem;
 
     //    private List<Topic> topics;
     public static TopicFragment newInstance(String index, String mSubjectName) {
@@ -143,7 +149,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         View.OnClickListener createSubjectButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreateTopicFragment createTopicFragment = CreateTopicFragment.newInstance(mSubjectObjectId);
+                CreateTopicFragment createTopicFragment = CreateTopicFragment.newInstance(mSubjectObjectId, mSubjectName);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, createTopicFragment);
@@ -257,6 +263,24 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_subject_users, menu);
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_subscribe);
+            if (item != null) {
+                mPushEnabledMenuItem = item;
+                ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+                ArrayList<ParseObject> subjects = (ArrayList<ParseObject>) parseInstallation.get("subjects");
+                if(subjects.contains(ParseObject.createWithoutData("Subject", mSubjectObjectId))) {
+                    item.setIcon(R.drawable.ic_notifications_active_white_24dp);
+                    mPushEnabled = true;
+                }
+            }
+            else {
+                Log.e("MENUITEM", " MENU ITEM IS EMPTY");
+
+            }
+        }else {
+            Log.e("MENU", "MENU IS EMPTY");
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -268,6 +292,40 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_user) {
             return true;
+        }
+        if (id == R.id.action_subscribe) {
+            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+            if(mPushEnabled) {
+                ArrayList<ParseObject> subject = new ArrayList<ParseObject>();
+                subject.add(ParseObject.createWithoutData("Subject", mSubjectObjectId));
+                parseInstallation.removeAll("subjects", subject);
+                parseInstallation.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mPushEnabled = false;
+                        if (mPushEnabledMenuItem != null) {
+                            mPushEnabledMenuItem.setIcon(R.drawable.ic_notifications_none_white_24dp);
+
+                        } else {
+                            Log.e("PUSH ENABLED", "PUSH ENABLED MENU ITEM IS NULL");
+                        }
+                    }
+                });
+            }else {
+                parseInstallation.add("subjects", ParseObject.createWithoutData("Subject", mSubjectObjectId));
+                parseInstallation.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mPushEnabled = true;
+                        if (mPushEnabledMenuItem != null) {
+                            mPushEnabledMenuItem.setIcon(R.drawable.ic_notifications_active_white_24dp);
+                        } else {
+                            Log.e("PUSH ENABLED", "PUSH ENABLED MENU ITEM IS NULL");
+                        }
+                    }
+                });
+
+            }
         }
         if (id == R.id.action_view_users) {
             SubjectUsersFragment subjectUsersFragment = SubjectUsersFragment.newInstance(mSubjectObjectId);
