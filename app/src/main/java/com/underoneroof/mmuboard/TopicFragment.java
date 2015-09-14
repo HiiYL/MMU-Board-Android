@@ -143,32 +143,11 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         View.OnClickListener createSubjectButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialDialog.Builder(getActivity())
-                        .title("Create A Topic")
-                        .content("Title")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .input("Enter the title of your topic", null , new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                final Topic topic = new Topic();
-                                topic.put("title", String.valueOf(input).split("\\r?\\n")[0]);
-                                topic.put("description", String.valueOf(input));
-                                topic.put("subject", ParseObject.createWithoutData("Subject", mSubjectObjectId));
-                                topic.put("createdBy", ParseUser.getCurrentUser());
-                                topic.saveEventually(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            loadFromParse(mSubjectObjectId);
-                                        } else {
-                                            Log.d("COUNT OF ADAPTER", "EROR?");
-                                        }
-                                    }
-                                });
-                                mAdapter.loadObjects();
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }).show();
+                CreateTopicFragment createTopicFragment = CreateTopicFragment.newInstance(mSubjectObjectId);
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, createTopicFragment);
+                fragmentTransaction.addToBackStack( "tag" ).commit();
 
             }
         };

@@ -103,7 +103,6 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         ParseFile postImage = object.getParseFile("image");
         if(postImage != null) {
             Uri imageUri = Uri.parse(postImage.getUrl());
-            Log.d("NOT NULL", "NOT NULL" + imageUri);
             Picasso.with(getContext()).load(imageUri.toString()).into(imageView);
         }
 

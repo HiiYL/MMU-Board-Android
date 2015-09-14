@@ -4,6 +4,7 @@ package com.underoneroof.mmuboard.Model;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 /**
  * Created by Hii on 9/5/15.
@@ -12,6 +13,13 @@ import com.parse.ParseQuery;
 public class Topic extends ParseObject {
     public static ParseQuery<Topic> getQuery() {
         return ParseQuery.getQuery(Topic.class);
+    }
+    public Topic(String subjectObjectId) {
+        put("subject", ParseObject.createWithoutData("Subject", subjectObjectId));
+        put("createdBy", ParseUser.getCurrentUser());
+    }
+    public Topic() {
+
     }
 //    String title;
 //    String description;
