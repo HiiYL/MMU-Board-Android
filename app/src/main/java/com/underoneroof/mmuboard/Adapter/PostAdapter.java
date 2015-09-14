@@ -103,7 +103,8 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         ParseFile postImage = object.getParseFile("image");
         if(postImage != null) {
             Uri imageUri = Uri.parse(postImage.getUrl());
-            Picasso.with(getContext()).load(imageUri.toString()).into(imageView);
+            Picasso.with(getContext()).load(imageUri.toString())
+                    .placeholder( R.drawable.progress_animation ).into(imageView);
         }
 
 
@@ -112,7 +113,8 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         contentsView.setText(object.getString("contents"));
         usernameView.setText(object.getParseUser("createdBy").getString("name"));
         Picasso.with(parent.getContext())
-                    .load(Gravatar.gravatarUrl(object.getParseUser("createdBy").getEmail()))
+                    .load(Gravatar.gravatarUrl(object.getParseUser("createdBy")
+                            .getEmail())).placeholder( R.drawable.progress_animation )
                     .into(profileView);
         return v;
     }

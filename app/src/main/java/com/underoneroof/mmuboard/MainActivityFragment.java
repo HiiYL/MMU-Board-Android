@@ -136,7 +136,9 @@ public class MainActivityFragment extends Fragment {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                if(mSubjectAdapter.isEmpty()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
             }
         });
         SubjectUser.getQuery().include("subject.createdBy")

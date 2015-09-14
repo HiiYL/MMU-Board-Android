@@ -53,12 +53,10 @@ import java.util.List;
  */
 public class TopicFragment extends android.support.v4.app.Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mSubjectObjectId;
     private String mSubjectName;
     private boolean mPushEnabled = false;
@@ -216,14 +214,15 @@ public class TopicFragment extends android.support.v4.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
     private void loadFromParse(final String subjectObjectId) {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                if(mAdapter.isEmpty()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
             }
         });
         Topic.getQuery()

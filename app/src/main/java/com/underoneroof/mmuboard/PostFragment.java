@@ -206,7 +206,14 @@ public class PostFragment extends android.support.v4.app.Fragment {
         public void onFragmentInteraction(Uri uri);
     }
     private void loadFromParse(final String topicObjectid) {
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mAdapter.isEmpty()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
         Post.getQuery()
                 .include("createdBy")
                 .orderByDescending("createdAt")

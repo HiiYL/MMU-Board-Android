@@ -16,17 +16,21 @@ import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 /**
  * Created by Hii on 09/09/2015.
  *
  */
 public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
+    PrettyTime p = new PrettyTime();
     public TopicAdapter(Context context, final String subjectObjectId) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
                 return ParseQuery.getQuery("Topic")
                         .include("createdBy")
                         .whereEqualTo("subject", ParseObject.createWithoutData("Subject", subjectObjectId))
+                        .orderByDescending("createdAt")
                         .fromLocalDatastore();
             }
         });
@@ -44,7 +48,8 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
 
         long post_count = object.getLong("post_count");
 
-        postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post "));
+        postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post ") +
+                Html.fromHtml(" \u25CF ") + p.format(object.getCreatedAt()) );
 
         titleView.setText(object.getString("title"));
         usernameView.setText(object.getParseUser("createdBy").getString("name"));
