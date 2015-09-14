@@ -1,16 +1,19 @@
 package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -21,6 +24,8 @@ import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.R;
 import com.underoneroof.mmuboard.Utility.Gravatar;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,12 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         TextView contentsView = (TextView) v.findViewById(R.id.contents);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         TextView likeCountView = (TextView) v.findViewById(R.id.like_count);
+        TextView timestamp = (TextView) v.findViewById(R.id.timestamp);
+        ImageView imageView = (ImageView) v.findViewById(R.id.post_image);
+
+        PrettyTime p = new PrettyTime();
+
+        timestamp.setText(p.format(object.getCreatedAt()));
         final Button likeButton = (Button) v.findViewById(R.id.like_btn);
         final ArrayList<ParseObject> users;
         if(object.get("likedBy") == null) {
@@ -67,9 +78,9 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
             @Override
             public void onClick(View v) {
                 likeButton.setEnabled(false);
-                if(contains_user) {
+                if (contains_user) {
                     users.remove(ParseUser.getCurrentUser());
-                }else {
+                } else {
                     users.add(ParseUser.getCurrentUser());
                 }
                 object.put("likedBy", users);
@@ -89,6 +100,12 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         likeCountView.setText(like_count > 1 ?
                 like_count + " users like this post" :
                 like_count + " user likes this post");
+        ParseFile postImage = object.getParseFile("image");
+        if(postImage != null) {
+            Uri imageUri = Uri.parse(postImage.getUrl());
+            Log.d("NOT NULL", "NOT NULL" + imageUri);
+            Picasso.with(getContext()).load(imageUri.toString()).into(imageView);
+        }
 
 
 

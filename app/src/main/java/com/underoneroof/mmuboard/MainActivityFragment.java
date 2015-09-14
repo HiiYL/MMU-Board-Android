@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -43,11 +44,6 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-    TextView tv;
-//    private RecyclerView mRecyclerView;
-//    private LinearLayoutManager mLayoutManager;
-    private List<Subject> subjects;
-//    private MyAdapter mAdapter;
     private ListView mListView;
     private ParseQueryAdapter<ParseObject> mSubjectAdapter;
     private FloatingActionButton mCreateSubjectButton;
@@ -60,6 +56,9 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onResume() {
         loadFromParse();
+        if(Utility.isLecturer()) {
+            mCreateSubjectButton.setVisibility(View.VISIBLE);
+        }
         super.onResume();
     }
 
@@ -104,9 +103,9 @@ public class MainActivityFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mSubjectAdapter.getItem(position).getInt("status") < 2) {
+                if (mSubjectAdapter.getItem(position).getInt("status") < 2) {
                     Toast.makeText(getActivity(), "You do not have permission to view this topic", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     ParseObject subject = mSubjectAdapter.getItem(position).getParseObject("subject");
                     TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -119,6 +118,8 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+
+
         mCreateSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,22 +127,23 @@ public class MainActivityFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
         return rootView;
     }
     public void loadFromParse() {
         mSwipeRefreshLayout.post(new Runnable() {
-                                     @Override
-                                     public void run() {
-                                         mSwipeRefreshLayout.setRefreshing(true);
-                                     }
-                                 });
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         SubjectUser.getQuery().include("subject.createdBy")
                 .whereEqualTo("user", ParseUser.getCurrentUser())
                 .findInBackground(new FindCallback<SubjectUser>() {
                     @Override
                     public void done(final List<SubjectUser> objects, com.parse.ParseException e) {
                         if (e == null) {
-                            ParseObject.unpinAllInBackground("SubjectAdapter", new DeleteCallback() {
+                            ParseObject.unpinAllInBackground("Subject Adapter", new DeleteCallback() {
                                 @Override
                                 public void done(com.parse.ParseException e) {
                                     if (e == null) {
@@ -274,46 +276,6 @@ public class MainActivityFragment extends Fragment {
                         }
                     });
         }
-    }
-    private void syncTodosToParse() {
-            if (!ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-                ParseQuery<Subject> query = Subject.getQuery();
-                query.fromPin(MainActivity.SUBJECT_GROUP_NAME);
-                query.whereEqualTo("isDraft", true);
-                query.findInBackground(new FindCallback<Subject>() {
-                    @Override
-                    public void done(List<Subject> objects, com.parse.ParseException e) {
-                        for (final Subject subject : subjects) {
-                            // Set is draft flag to false before
-                            // syncing to Parse
-                            subject.setDraft(false);
-                            subject.saveEventually(new SaveCallback() {
-
-                                @Override
-                                public void done(com.parse.ParseException e) {
-                                    if (e == null) {
-                                        // Let adapter know to update view
-                                        mSubjectAdapter
-                                                .notifyDataSetChanged();
-                                    } else {
-                                        // Reset the is draft flag locally to true
-                                        subject.setDraft(true);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-                // If we have a network connection and a current
-                // logged in user, sync the todos
-            } else {
-                // If we have a network connection but no logged in user, direct
-                // the person to log in or sign up.
-                Toast.makeText(
-                        getActivity(),
-                        "You appear to not be logged in! Log in to continue",
-                        Toast.LENGTH_LONG).show();
-            }
     }
 
 }

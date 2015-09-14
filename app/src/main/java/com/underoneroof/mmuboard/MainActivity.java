@@ -44,29 +44,31 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     private DrawerLayout drawerLayout;
     private TextView email, username;
     private MainActivityFragment mainActivityFragment;
+    private int LOGIN_ACTIVITY_RESULT_CODE = 1;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("MyApp", "onActivityResult in LoginActivity is called");
-        email = (TextView) findViewById(R.id.email);
-        username = (TextView) findViewById(R.id.username);
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
-            email.setText(currentUser.getEmail());
-            username.setText(currentUser.getUsername());
-            if(currentUser.getEmail() != null ) {
-                Picasso.with(MainActivity.this)
-                        .load(Gravatar.gravatarUrl(currentUser.getEmail()))
-                        .into((CircleImageView) findViewById(R.id.profile_image));
+        if(resultCode == LOGIN_ACTIVITY_RESULT_CODE) {
+            Log.d("MyApp", "onActivityResult in LoginActivity is called");
+            email = (TextView) findViewById(R.id.email);
+            username = (TextView) findViewById(R.id.username);
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            if (currentUser != null) {
+                email.setText(currentUser.getEmail());
+                username.setText(currentUser.getUsername());
+                if (currentUser.getEmail() != null) {
+                    Picasso.with(MainActivity.this)
+                            .load(Gravatar.gravatarUrl(currentUser.getEmail()))
+                            .into((CircleImageView) findViewById(R.id.profile_image));
+                }
+            }
+            if (mainActivityFragment != null) {
+                mainActivityFragment.loadAllFromParse();
+            } else {
+                Log.e("MAIN ACTIVITY FRAGMENT", "mainActivityFragment IS NULL");
             }
         }
-        if(mainActivityFragment != null) {
-            mainActivityFragment.loadAllFromParse();
-        }else {
-            Log.e("MAIN ACTIVITY FRAGMENT", "mainActivityFragment IS NULL");
-        }
-
-
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         if(ParseUser.getCurrentUser() == null) {
             ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
-            startActivityForResult(builder.build(), 0);
+            startActivityForResult(builder.build(), LOGIN_ACTIVITY_RESULT_CODE);
         }
         setContentView(R.layout.activity_main);
         // Initializing Toolbar and setting it as the actionbar

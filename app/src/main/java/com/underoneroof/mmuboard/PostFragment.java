@@ -1,23 +1,34 @@
 package com.underoneroof.mmuboard;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -27,6 +38,10 @@ import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 public class PostFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -60,6 +75,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public PostFragment() {
         // Required empty public constructor
     }
+
+
     @Override
     public void onResume() {
         if(Utility.isConnectedToNetwork(getActivity())) {
@@ -73,6 +90,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mTopicObjectId = getArguments().getString("index");
             mTopicTitle = getArguments().getString("title");
@@ -103,40 +121,11 @@ public class PostFragment extends android.support.v4.app.Fragment {
         View.OnClickListener createSubjectButtonClickListener =  new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialDialog.Builder(getActivity())
-                        .title("Create A Post")
-                        .content("Contents")
-                        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE)
-                        .input("Enter the contents of your post", null , new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                final Post post = new Post();
-                                post.put("title", String.valueOf(input).split("\\r?\\n")[0]);
-                                post.put("contents", String.valueOf(input));
-                                post.put("topic", ParseObject.createWithoutData("Topic", mTopicObjectId));
-                                post.put("createdBy", ParseUser.getCurrentUser());
-                                post.saveEventually(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        ParseQuery<ParseObject> topic_query = ParseQuery.getQuery("Post");
-                                        topic_query.whereEqualTo("topic", mTopic);
-                                        topic_query.findInBackground(new FindCallback<ParseObject>() {
-                                            @Override
-                                            public void done(List<ParseObject> list, ParseException e) {
-                                                ParseObject.pinAllInBackground(list);
-                                                if (e == null) {
-                                                    loadFromParse(mTopicObjectId);
-                                                } else {
-                                                    Log.d("subject", "Error: " + e.getMessage());
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                                mAdapter.loadObjects();
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }).show();
+                CreatePostFragment createPostFragment = CreatePostFragment.newInstance(mTopicObjectId);
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, createPostFragment);
+                fragmentTransaction.addToBackStack("tag").commit();
             }
         };
         mCreateSubjectButton.setOnClickListener(createSubjectButtonClickListener);
@@ -165,6 +154,52 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_post_fragment, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_remove_topic) {
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            try {
+                                Topic.getQuery().get(mTopicObjectId).deleteEventually(new DeleteCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        getFragmentManager().popBackStack();
+                                    }
+                                });
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            break;
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Are you sure you want to delete this topic?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

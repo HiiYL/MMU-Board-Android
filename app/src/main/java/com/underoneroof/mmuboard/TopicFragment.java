@@ -270,48 +270,11 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                     });
                 } else {
                     Log.e("Topic Adapter" + subjectObjectId, "DELETE FAILED");
-
                 }
 
             }
         });
     }
-//    void loadPosts(final List<Topic> topics) {
-//        for(final Topic topic : topics) {
-//            Post.getQuery().whereEqualTo("topic", topic)
-//                    .findInBackground(new FindCallback<Post>() {
-//                        @Override
-//                        public void done(final List<Post> posts, com.parse.ParseException e) {
-//                            final String topicObjectId = topic.getObjectId();
-//                            if (e == null) {
-//                                ParseObject.unpinAllInBackground("PostAdapter" + topicObjectId, new DeleteCallback() {
-//                                    @Override
-//                                    public void done(com.parse.ParseException e) {
-//                                        if (e == null) {
-//                                            ParseObject.pinAllInBackground("PostAdapter" + topicObjectId, posts,
-//                                                    new SaveCallback() {
-//                                                        @Override
-//                                                        public void done(com.parse.ParseException e) {
-//                                                            if(topic == topics.get(topics.size() - 1) ) {
-//                                                                mAdapter.loadObjects();
-//                                                                mSwipeRefreshLayout.setRefreshing(false);
-//                                                            }
-//                                                        }
-//                                                    });
-//                                        } else {
-//                                            Log.e("Post Adapter" + topicObjectId, "DELETION FAILED");
-//                                        }
-//                                    }
-//                                });
-//                            } else {
-//                                Log.i("Topic Adapter",
-//                                        "loadFromParse: Error finding pinned todos: "
-//                                                + e.getMessage());
-//                            }
-//                        }
-//                    });
-//        }
-//    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_subject_users, menu);
