@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/my_subjects"
+            android:checked="false"
+            android:icon="@drawable/ic_bookmark_border_black_24dp"
+            android:title="My Subjects" />
+
+        <item
+            android:id="@+id/drafts"
+            android:checked="false"
+            android:icon="@drawable/ic_subject_black_24dp"
+            android:title="All Subjects" />
+
+        <item
+            android:id="@+id/sent_mail"
+            android:checked="false"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
+            android:title="Log Out" />
+
+
+
+
+        <!--<item-->
+            <!--android:id="@+id/allmail"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_mode_edit_black_24dp"-->
+            <!--android:title="All Mail" />-->
+        <!--<item-->
+            <!--android:id="@+id/trash"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_mode_edit_black_24dp"-->
+            <!--android:title="Trash" />-->
+        <!--<item-->
+            <!--android:id="@+id/spam"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_mode_edit_black_24dp"-->
+            <!--android:title="Spam" />-->
+
+    </group>
+</menu>

@@ -9,10 +9,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.util.Log;
 
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,12 +66,34 @@ public class Utility {
         }
         return result;
     }
-    public static byte[] convertImageToByte(Uri uri, Context context){
-        byte[] data = null;
+
+    public static byte[] convertImageToByte(Uri uri, Context context) {
+        Log.d("CONVERT", "CONVERT IMAGE CALLED");
+        int bufferSize = 1024;
+        byte[] data = new byte[bufferSize];
+        Bitmap bitmap;
         try {
+            // Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
             ContentResolver cr = context.getContentResolver();
             InputStream inputStream = cr.openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+            BitmapFactory.decodeStream(inputStream, null, o);
+            // The new size we want to scale to
+            final int REQUIRED_SIZE=500;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            // Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            bitmap = BitmapFactory.decodeStream(inputStream, null, o2);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             data = baos.toByteArray();

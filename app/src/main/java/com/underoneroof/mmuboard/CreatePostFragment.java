@@ -2,6 +2,8 @@ package com.underoneroof.mmuboard;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,10 @@ import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Utility.Utility;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class CreatePostFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -74,6 +80,7 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
             }
         }
     }
+
     public static CreatePostFragment newInstance(String param1) {
         CreatePostFragment fragment = new CreatePostFragment();
         Bundle args = new Bundle();
