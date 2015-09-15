@@ -2,10 +2,10 @@ package com.underoneroof.mmuboard;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,6 @@ import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Model.Post;
-import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 

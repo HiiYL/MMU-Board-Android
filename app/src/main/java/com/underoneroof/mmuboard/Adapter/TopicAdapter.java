@@ -2,18 +2,13 @@ package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.parse.CountCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
-import com.underoneroof.mmuboard.Model.Subject;
-import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.R;
 
 import org.ocpsoft.prettytime.PrettyTime;

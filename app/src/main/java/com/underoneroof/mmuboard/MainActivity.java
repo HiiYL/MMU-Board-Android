@@ -1,12 +1,8 @@
 package com.underoneroof.mmuboard;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -14,26 +10,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
-import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Utility.Gravatar;
-
-import java.text.ParseException;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

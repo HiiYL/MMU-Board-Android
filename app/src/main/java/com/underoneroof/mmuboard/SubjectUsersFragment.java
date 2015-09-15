@@ -3,13 +3,11 @@ package com.underoneroof.mmuboard;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -17,7 +15,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
-import com.underoneroof.mmuboard.Model.Subject;
 public class SubjectUsersFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

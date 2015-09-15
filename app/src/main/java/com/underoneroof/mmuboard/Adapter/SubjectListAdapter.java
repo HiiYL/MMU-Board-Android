@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.parse.GetCallback;
@@ -13,13 +12,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Subject;
-import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.R;
-import com.underoneroof.mmuboard.Utility.Gravatar;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Hii on 10/09/2015.

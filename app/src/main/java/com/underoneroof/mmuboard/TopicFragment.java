@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,25 +16,14 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseQueryAdapter;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
-import com.underoneroof.mmuboard.Model.Post;
-import com.underoneroof.mmuboard.Model.Subject;
-import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
@@ -268,7 +256,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                 mPushEnabledMenuItem = item;
                 ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
                 ArrayList<ParseObject> subjects = (ArrayList<ParseObject>) parseInstallation.get("subjects");
-                if(subjects.contains(ParseObject.createWithoutData("Subject", mSubjectObjectId))) {
+                if(subjects != null && subjects.contains(ParseObject.createWithoutData("Subject", mSubjectObjectId))) {
                     item.setIcon(R.drawable.ic_notifications_active_white_24dp);
                     mPushEnabled = true;
                 }
@@ -290,6 +278,11 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_user) {
+            SubjectStatsFragment subjectUsersFragment = SubjectStatsFragment.newInstance(mSubjectObjectId);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+            fragmentTransaction.replace(R.id.frame, subjectUsersFragment);
+            fragmentTransaction.addToBackStack( "tag" ).commit();
             return true;
         }
         if (id == R.id.action_subscribe) {

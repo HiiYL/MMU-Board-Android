@@ -2,10 +2,8 @@ package com.underoneroof.mmuboard;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +121,7 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                submitBtn.setClickable(false);
                 String sContents = contentsEditText.getText().toString();
                 if(sContents.matches("")) {
                     Toast.makeText(getActivity(), "Contents can't be empty!", Toast.LENGTH_SHORT).show();
