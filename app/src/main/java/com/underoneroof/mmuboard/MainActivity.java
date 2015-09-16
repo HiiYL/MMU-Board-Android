@@ -19,6 +19,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
+import com.underoneroof.mmuboard.Model.Analytics;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-
 
                 //Checking if the item is in checked state or not, if not make it in checked state
                 if(menuItem.isChecked()) menuItem.setChecked(false);

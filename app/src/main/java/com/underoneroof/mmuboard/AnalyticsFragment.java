@@ -3,6 +3,7 @@ package com.underoneroof.mmuboard;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +25,19 @@ import com.github.mikephil.charting.utils.ValueFormatter;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.parse.CountCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.underoneroof.mmuboard.Model.Analytics;
+import com.underoneroof.mmuboard.Model.Topic;
 
 
 public class AnalyticsFragment extends android.support.v4.app.Fragment implements SeekBar.OnSeekBarChangeListener,
@@ -47,16 +55,11 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
     private TextView tvX, tvY;
     private Typeface mTf;
 
+
     protected String[] mMonths = new String[] {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
     };
 
-    protected String[] mParties = new String[] {
-            "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
-            "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
-            "Party Q", "Party R", "Party S", "Party T", "Party U", "Party V", "Party W", "Party X",
-            "Party Y", "Party Z"
-    };
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -122,7 +125,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(mTf);
-        leftAxis.setLabelCount(8,true);
+        leftAxis.setLabelCount(8, true);
         //leftAxis.setValueFormatter(custom);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         leftAxis.setSpaceTop(15f);
@@ -130,7 +133,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setDrawGridLines(false);
         rightAxis.setTypeface(mTf);
-        rightAxis.setLabelCount(8,true);
+        rightAxis.setLabelCount(8, true);
         //rightAxis.setValueFormatter(custom);
         rightAxis.setSpaceTop(15f);
 
@@ -179,22 +182,29 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         return rootView;
     }
 
+
     private void setData(int count, float range) {
 
         ArrayList<String> xVals = new ArrayList<String>();
+
+        //add month
         for (int i = 0; i < count; i++) {
             xVals.add(mMonths[i % 12]);
         }
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+        ArrayList<Integer> yVals1 = Analytics.yVals1;
 
+
+        //generate random value
         for (int i = 0; i < count; i++) {
             float mult = (range + 1);
-            float val = (float) (Math.random() * mult);
-            yVals1.add(new BarEntry(val, i));
+            float val = yVals1.get(i);
+            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
+            Log.d("test", String.valueOf(val));
         }
 
-        BarDataSet set1 = new BarDataSet(yVals1, "DataSet");
+        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
         set1.setBarSpacePercent(35f);
 
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
@@ -202,10 +212,11 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
 
         BarData data = new BarData(xVals, dataSets);
         // data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextSize(10f);
+        data.setValueTextSize(10);
         data.setValueTypeface(mTf);
 
         mChart.setData(data);
+
     }
 
     @Override

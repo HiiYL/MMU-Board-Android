@@ -28,6 +28,10 @@ import com.underoneroof.mmuboard.Utility.Utility;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CreatePostFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -124,6 +128,8 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
                         "Complete action using"), PHOTO_PICKER_ID);
             }
         });
+
+
         final EditText contentsEditText = (EditText) view.findViewById(R.id.contents);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +139,15 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
                 if(sContents.matches("")) {
                     Toast.makeText(getActivity(), "Contents can't be empty!", Toast.LENGTH_SHORT).show();
                 }else {
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.DAY_OF_MONTH, 1);
+                    calendar.set(Calendar.MONTH,7);
+                    Date date = calendar.getTime();
+
                     post.put("contents", sContents);
                     post.put("createdBy", ParseUser.getCurrentUser());
+                    //post.put("createdAt", "2015-08-16T14:46:05.846Z");
                     post.put("topic", ParseObject.createWithoutData("Topic", mTopicObjectId));
                     post.saveEventually(new SaveCallback() {
                         @Override

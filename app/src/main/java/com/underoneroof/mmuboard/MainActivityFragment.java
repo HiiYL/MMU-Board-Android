@@ -22,6 +22,7 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
+import com.underoneroof.mmuboard.Model.Analytics;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.SubjectUser;
 import com.underoneroof.mmuboard.Model.Topic;
@@ -63,6 +64,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         getActivity().setTitle("My Subjects");
+        Analytics.setMonthlyData();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
