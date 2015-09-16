@@ -34,11 +34,11 @@ public class Utility {
     public static boolean isLecturer() {
         return (ParseUser.getCurrentUser() != null && ParseUser.getCurrentUser().getBoolean("isLecturer"));
     }
-    public byte[] getBytes(InputStream inputStream) throws IOException {
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
-
         int len = 0;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
@@ -68,38 +68,18 @@ public class Utility {
     }
 
     public static byte[] convertImageToByte(Uri uri, Context context) {
-        Log.d("CONVERT", "CONVERT IMAGE CALLED");
-        int bufferSize = 1024;
-        byte[] data = new byte[bufferSize];
-        Bitmap bitmap;
+        ContentResolver cr = context.getContentResolver();
+        InputStream inputStream = null;
         try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            ContentResolver cr = context.getContentResolver();
-            InputStream inputStream = cr.openInputStream(uri);
-
-            BitmapFactory.decodeStream(inputStream, null, o);
-            // The new size we want to scale to
-            final int REQUIRED_SIZE=500;
-
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-
-            // Decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            bitmap = BitmapFactory.decodeStream(inputStream, null, o2);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            data = baos.toByteArray();
+            inputStream = cr.openInputStream(uri);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return data;
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+        // Convert it to byte
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        // Compress image to lower quality scale 1 - 100
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        return stream.toByteArray();
     }
 }
