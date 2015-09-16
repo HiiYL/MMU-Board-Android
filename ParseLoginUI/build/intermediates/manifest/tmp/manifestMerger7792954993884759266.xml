@@ -17,19 +17,27 @@
     ~ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
     ~ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
     ~ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    -->
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.parse.ui.test" >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-    <TextView
-        android:id="@android:id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@android:id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</LinearLayout>
-<!-- From: file:/Users/Jack/mmuboard-android/ParseLoginUI/src/androidTest/res/layout/view_item.xml -->
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="23" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:functionalTest="false"
+        android:handleProfiling="false"
+        android:label="Tests for com.parse.ui.test"
+        android:targetPackage="com.parse.ui.test" />
+
+    <application>
+        <activity
+            android:name="com.parse.ui.TestActivity"
+            android:screenOrientation="portrait" />
+
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+</manifest>

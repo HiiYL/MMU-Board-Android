@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/Hii/AndroidStudioProjects/MMUBoard/ParseLoginUI/src/main/assets"/></dataSet><dataSet config="debug"><source path="/Users/Hii/AndroidStudioProjects/MMUBoard/ParseLoginUI/src/debug/assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/Jack/mmuboard-android/ParseLoginUI/src/main/assets"/></dataSet><dataSet config="debug"><source path="/Users/Jack/mmuboard-android/ParseLoginUI/src/debug/assets"/></dataSet></merger>

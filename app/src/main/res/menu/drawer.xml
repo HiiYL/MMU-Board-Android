@@ -16,6 +16,12 @@
             android:title="All Subjects" />
 
         <item
+            android:id="@+id/analytics"
+            android:checked="false"
+            android:icon="@drawable/ic_subject_black_24dp"
+            android:title="Analytics" />
+
+        <item
             android:id="@+id/sent_mail"
             android:checked="false"
             android:icon="@drawable/ic_mode_edit_black_24dp"

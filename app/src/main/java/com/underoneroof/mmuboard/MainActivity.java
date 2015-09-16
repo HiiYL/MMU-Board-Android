@@ -138,6 +138,26 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         fragmentTransaction.replace(R.id.frame, subjectListFragment);
                         fragmentTransaction.commit();
                         return true;
+
+                    case R.id.analytics:{
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                       /* AnalyticsFragment analyticsFragment = new AnalyticsFragment();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction1.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                        fragmentTransaction1.replace(R.id.frame, analyticsFragment);
+                        fragmentTransaction1.commit();*/
+
+                        AnalyticsFragment analyticsFragment = new AnalyticsFragment();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction2.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                        fragmentTransaction2.replace(R.id.frame, analyticsFragment);
+                        fragmentTransaction2.commit();
+
+
+                        return true;
+                    }
+
+
                     default:
                         Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
                         return true;

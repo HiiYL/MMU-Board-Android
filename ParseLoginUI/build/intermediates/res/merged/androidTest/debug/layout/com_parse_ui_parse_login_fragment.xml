@@ -26,4 +26,4 @@
         <include layout="@layout/com_parse_ui_parse_login_third_party_section" />
     </LinearLayout>
 </LinearLayout>
-<!-- From: file:/Users/Hii/AndroidStudioProjects/MMUBoard/ParseLoginUI/src/main/res/layout/com_parse_ui_parse_login_fragment.xml --><!-- From: file:/Users/Hii/AndroidStudioProjects/MMUBoard/ParseLoginUI/build/intermediates/bundles/debug/res/layout/com_parse_ui_parse_login_fragment.xml -->
+<!-- From: file:/Users/Jack/mmuboard-android/ParseLoginUI/src/main/res/layout/com_parse_ui_parse_login_fragment.xml --><!-- From: file:/Users/Jack/mmuboard-android/ParseLoginUI/build/intermediates/bundles/debug/res/layout/com_parse_ui_parse_login_fragment.xml -->

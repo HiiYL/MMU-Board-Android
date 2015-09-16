@@ -1,0 +1,134 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.github.hiiyl.mmuhub.FeesDueFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">>
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="83dp">
+
+            <TextView
+                android:layout_width="172dp"
+                android:layout_height="wrap_content"
+                android:text="Total Users:"
+
+                android:textSize="30sp"
+                android:gravity="center"
+                android:layout_row="0"
+                android:layout_column="0" />
+
+            <TextView
+                android:layout_width="172dp"
+                android:layout_height="wrap_content"
+                android:text="Total post:"
+
+                android:textSize="30sp"
+                android:gravity="center"
+                android:layout_row="0"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="139dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="Loading.."
+                android:id="@+id/total_user"
+                android:layout_row="1"
+                android:layout_column="0" />
+
+            <TextView
+                android:layout_width="139dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="Loading.."
+                android:id="@+id/total_post"
+                android:layout_row="1"
+                android:layout_column="1" />
+
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="*Student Participation Pattern*"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/chart1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/seekBar1" />
+
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="8dp"
+            android:layout_toLeftOf="@+id/tvYMax"
+            android:layout_marginRight="5dp"
+            android:max="200"
+            android:paddingBottom="12dp" />
+
+        <SeekBar
+            android:id="@+id/seekBar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/seekBar2"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="35dp"
+            android:layout_toLeftOf="@+id/tvXMax"
+            android:layout_marginRight="5dp"
+            android:max="1500"
+            android:paddingBottom="12dp" />
+
+        <TextView
+            android:id="@+id/tvXMax"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/seekBar1"
+            android:layout_alignParentRight="true"
+            android:text="500"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="10dp"
+            android:gravity="right"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/tvYMax"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/seekBar2"
+            android:layout_alignParentRight="true"
+            android:text="500"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="10dp"
+            android:gravity="right"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+
+
+</FrameLayout>
