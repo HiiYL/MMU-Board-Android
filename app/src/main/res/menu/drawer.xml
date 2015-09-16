@@ -19,7 +19,8 @@
             android:id="@+id/analytics"
             android:checked="false"
             android:icon="@drawable/ic_subject_black_24dp"
-            android:title="Analytics" />
+            android:title="Analytics"
+            android:visible="false"/>
 
         <item
             android:id="@+id/sent_mail"

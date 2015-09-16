@@ -21,6 +21,7 @@ import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Analytics;
 import com.underoneroof.mmuboard.Utility.Gravatar;
+import com.underoneroof.mmuboard.Utility.Utility;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -92,13 +93,17 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
                         .into((CircleImageView) findViewById(R.id.profile_image));
             }
         }
+
+        if(Utility.isLecturer()) {
+            navigationView.getMenu().findItem(R.id.analytics).setVisible(true);
+        }
+
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-
                 //Checking if the item is in checked state or not, if not make it in checked state
                 if(menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
