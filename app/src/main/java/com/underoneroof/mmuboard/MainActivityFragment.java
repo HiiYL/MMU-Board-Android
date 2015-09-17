@@ -60,9 +60,12 @@ public class MainActivityFragment extends Fragment {
         Log.d("ONCREATE", "ONCREATE CALLED");
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         getActivity().setTitle("My Subjects");
         Analytics.setMonthlyData();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);

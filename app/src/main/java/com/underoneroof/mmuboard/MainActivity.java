@@ -81,22 +81,28 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+
+
         email = (TextView) findViewById(R.id.email);
         username = (TextView) findViewById(R.id.username);
         ParseUser currentUser = ParseUser.getCurrentUser();
+
+
         if (currentUser != null) {
             email.setText(currentUser.getEmail());
             username.setText(currentUser.getUsername());
+
             if(currentUser.getEmail() != null ) {
                 Picasso.with(MainActivity.this)
                         .load(Gravatar.gravatarUrl(currentUser.getEmail()))
                         .into((CircleImageView) findViewById(R.id.profile_image));
             }
+
         }
 
-        if(Utility.isLecturer()) {
-            navigationView.getMenu().findItem(R.id.analytics).setVisible(true);
-        }
+
+
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -105,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 //Checking if the item is in checked state or not, if not make it in checked state
+
                 if(menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
 
@@ -184,7 +191,12 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             @Override
             public void onDrawerOpened(View drawerView) {
                 // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-
+                if(Utility.isLecturer()==false) {
+                    navigationView.getMenu().findItem(R.id.analytics).setVisible(false);
+                }
+                else{
+                    navigationView.getMenu().findItem(R.id.analytics).setVisible(true);
+                }
                 super.onDrawerOpened(drawerView);
             }
         };
