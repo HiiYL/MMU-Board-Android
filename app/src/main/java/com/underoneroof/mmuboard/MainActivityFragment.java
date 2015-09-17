@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -66,8 +67,10 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        getActivity().setTitle("My Subjects");
-        Analytics.setMonthlyData();
+        Analytics runner = new Analytics();
+        //String sleepTime = time.getText().toString();
+        runner.execute();
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);

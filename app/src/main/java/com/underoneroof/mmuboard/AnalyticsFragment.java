@@ -192,17 +192,17 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
             xVals.add(mMonths[i % 12]);
         }
 
-        ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-        ArrayList<Integer> yVals1 = Analytics.yVals1;
-
+        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
 
         //generate random value
-        for (int i = 0; i < count; i++) {
+       /* for (int i = 0; i < count; i++) {
             float mult = (range + 1);
             float val = yVals1.get(i);
             yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
             Log.d("test", String.valueOf(val));
-        }
+        }*/
+
+        ArrayList<BarEntry> yVals2 = Analytics.yVals2;
 
         BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
         set1.setBarSpacePercent(35f);
