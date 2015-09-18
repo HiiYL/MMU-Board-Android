@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
 
         if (currentUser != null) {
+            //load analytics data
+            Analytics runner = new Analytics();
+            runner.execute();
             email.setText(currentUser.getEmail());
             username.setText(currentUser.getUsername());
 

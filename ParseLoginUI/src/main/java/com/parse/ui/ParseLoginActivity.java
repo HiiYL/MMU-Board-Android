@@ -180,6 +180,7 @@ public class ParseLoginActivity extends FragmentActivity implements
       progressDialog = ProgressDialog.show(this, null,
           getString(R.string.com_parse_ui_progress_dialog_text), true, false);
     }
+
   }
 
   /**

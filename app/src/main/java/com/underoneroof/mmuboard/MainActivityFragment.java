@@ -67,10 +67,6 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        Analytics runner = new Analytics();
-        //String sleepTime = time.getText().toString();
-        runner.execute();
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.subject_listview);
         mCreateSubjectButton = (FloatingActionButton) rootView.findViewById(R.id.create_subject_btn);
@@ -198,6 +194,7 @@ public class MainActivityFragment extends Fragment {
                         }
                     }
                 });
+
     }
     void loadTopics(final List<SubjectUser> subjectUsers) {
         for (final SubjectUser subjectUser : subjectUsers) {
