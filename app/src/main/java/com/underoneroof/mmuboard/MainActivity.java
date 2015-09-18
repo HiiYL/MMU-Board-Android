@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if (ParseUser.getCurrentUser() == null) {
             ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
             startActivityForResult(builder.build(), LOGIN_ACTIVITY_RESULT_CODE);

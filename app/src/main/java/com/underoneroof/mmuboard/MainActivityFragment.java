@@ -48,6 +48,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onResume() {
         loadFromParse();
+        loadAnalytic();
         if(Utility.isLecturer()) {
             mCreateSubjectButton.setVisibility(View.VISIBLE);
         }
@@ -167,7 +168,7 @@ public class MainActivityFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
-        loadAnalytic();
+
         ParseQuery<SubjectUser> query = SubjectUser.getQuery();
         query.include("subject.createdBy")
 //                .whereEqualTo("user", ParseUser.getCurrentUser())
