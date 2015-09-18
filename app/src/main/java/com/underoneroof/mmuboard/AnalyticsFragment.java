@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.graphics.Typeface;
@@ -148,11 +149,34 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         // l.setCustom(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
         // "def", "ghj", "ikl", "mno" });
 
-        setData(12, 50);
+        setPostData(12, 50);
 
-        // setting data
-        mSeekBarY.setProgress(50);
-        mSeekBarX.setProgress(12);
+        Button btnLogin= (Button) rootView.findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("test", "LoginButton Click");
+                setLoginData(12, 50);
+                // setting data
+                mSeekBarY.setProgress(50);
+                mSeekBarX.setProgress(12);
+                mChart.invalidate();
+            }
+        });
+
+        Button btnPost = (Button) rootView.findViewById(R.id.btnPost);
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("test","PostButton Click");
+                setPostData(12, 50);
+                // setting data
+                mSeekBarY.setProgress(50);
+                mSeekBarX.setProgress(12);
+                mChart.invalidate();
+            }
+        });
+
 
         mSeekBarY.setOnSeekBarChangeListener(this);
         mSeekBarX.setOnSeekBarChangeListener(this);
@@ -179,11 +203,13 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
             }
         });
 
+
+
         return rootView;
     }
 
 
-    private void setData(int count, float range) {
+    private void setPostData(int count, float range) {
 
         ArrayList<String> xVals = new ArrayList<String>();
 
@@ -203,6 +229,42 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         }*/
 
         ArrayList<BarEntry> yVals2 = Analytics.yVals2;
+
+        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
+        set1.setBarSpacePercent(35f);
+
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(xVals, dataSets);
+        // data.setValueFormatter(new MyValueFormatter());
+        data.setValueTextSize(10);
+        data.setValueTypeface(mTf);
+
+        mChart.setData(data);
+
+    }
+
+    private void setLoginData(int count, float range) {
+
+        ArrayList<String> xVals = new ArrayList<String>();
+
+        //add month
+        for (int i = 0; i < count; i++) {
+            xVals.add(mMonths[i % 12]);
+        }
+
+        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+
+        //generate random value
+       /* for (int i = 0; i < count; i++) {
+            float mult = (range + 1);
+            float val = yVals1.get(i);
+            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
+            Log.d("test", String.valueOf(val));
+        }*/
+
+        ArrayList<BarEntry> yVals2 = Analytics.yVals3;
 
         BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
         set1.setBarSpacePercent(35f);
