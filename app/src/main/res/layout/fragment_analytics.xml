@@ -88,10 +88,11 @@
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:gravity="center"
-            android:text="Student Participation Pattern"
+            android:text="Post Analytics"
             android:layout_row="1"
             android:layout_column="1"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/title" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart1"

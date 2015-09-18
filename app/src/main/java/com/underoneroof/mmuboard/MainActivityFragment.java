@@ -128,7 +128,7 @@ public class MainActivityFragment extends Fragment {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if(mSubjectAdapter.isEmpty()) {
+                if (mSubjectAdapter.isEmpty()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
             }
@@ -167,6 +167,7 @@ public class MainActivityFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
+        loadAnalytic();
         ParseQuery<SubjectUser> query = SubjectUser.getQuery();
         query.include("subject.createdBy")
 //                .whereEqualTo("user", ParseUser.getCurrentUser())
@@ -273,6 +274,11 @@ public class MainActivityFragment extends Fragment {
                         }
                     });
         }
+    }
+    void loadAnalytic(){
+        //load analytics data
+         Analytics runner = new Analytics();
+         runner.execute();
     }
 
 }

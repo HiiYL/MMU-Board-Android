@@ -41,6 +41,7 @@ import com.facebook.GraphResponse;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -189,6 +190,9 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
               if (user != null) {
                 loadingFinish();
                 loginSuccess();
+                ParseObject logintrack = new ParseObject("Logintrack");
+                logintrack.put("user", ParseUser.getCurrentUser());
+                logintrack.saveInBackground();
               } else {
                 loadingFinish();
                 if (e != null) {

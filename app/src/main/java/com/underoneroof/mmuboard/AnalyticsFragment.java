@@ -37,6 +37,7 @@ import com.parse.CountCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Model.Analytics;
 import com.underoneroof.mmuboard.Model.Topic;
 
@@ -51,10 +52,12 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
     private SharedPreferences mPrefs;
     private TextView mTotal_user;
     private TextView mTotal_post;
+    private TextView mTitle;
     private BarChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
     private Typeface mTf;
+
 
 
     protected String[] mMonths = new String[] {
@@ -84,6 +87,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         mTotal_user = (TextView) rootView.findViewById(R.id.total_user);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mTotal_post = (TextView) rootView.findViewById(R.id.total_post);
+        mTitle = (TextView) rootView.findViewById(R.id.title);
 
         tvX = (TextView) rootView.findViewById(R.id.tvXMax);
         tvY = (TextView) rootView.findViewById(R.id.tvYMax);
@@ -161,6 +165,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
                 mSeekBarY.setProgress(50);
                 mSeekBarX.setProgress(12);
                 mChart.invalidate();
+                mTitle.setText("User Login Analytics");
             }
         });
 
@@ -168,12 +173,13 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("test","PostButton Click");
+                Log.d("test", "PostButton Click");
                 setPostData(12, 50);
                 // setting data
                 mSeekBarY.setProgress(50);
                 mSeekBarX.setProgress(12);
                 mChart.invalidate();
+                mTitle.setText("Post Analytics");
             }
         });
 

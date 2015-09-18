@@ -64,7 +64,7 @@ public class Analytics extends AsyncTask<Integer,Integer,Integer> {
             }
             //Log.d("object: ", String.valueOf(results.size()));
 
-            ParseQuery<ParseObject> query2 = ParseQuery.getQuery("_Session");
+            ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Logintrack");
             query2.whereLessThanOrEqualTo("createdAt", date2);
             query2.whereGreaterThanOrEqualTo("createdAt", date);
 
@@ -84,6 +84,7 @@ public class Analytics extends AsyncTask<Integer,Integer,Integer> {
             }
             Log.d("object: ", String.valueOf(results2.size()));
         }
+
 
 
         return i;

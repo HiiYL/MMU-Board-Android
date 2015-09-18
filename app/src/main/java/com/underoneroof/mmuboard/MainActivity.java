@@ -15,13 +15,24 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.CountCallback;
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
 import com.underoneroof.mmuboard.Model.Analytics;
+import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 import com.underoneroof.mmuboard.Utility.Utility;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -68,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(ParseUser.getCurrentUser() == null) {
+        
+        if (ParseUser.getCurrentUser() == null) {
             ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
             startActivityForResult(builder.build(), LOGIN_ACTIVITY_RESULT_CODE);
         }
@@ -91,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
         if (currentUser != null) {
             //load analytics data
-            Analytics runner = new Analytics();
-            runner.execute();
+           // Analytics runner = new Analytics();
+            //runner.execute();
             email.setText(currentUser.getEmail());
             username.setText(currentUser.getUsername());
 
