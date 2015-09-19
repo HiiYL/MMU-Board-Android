@@ -156,47 +156,17 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         // l.setCustom(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
         // "def", "ghj", "ikl", "mno" });
 
+        setPostData();
 
-        final int [] counter = new int[12];
-        ParseQuery.getQuery("Post").findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                for(ParseObject object : objects) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(object.getCreatedAt());
-                    int month = cal.get(Calendar.MONTH);
-                    counter[month] = counter[month] + 1;
-                }
-                ArrayList<String> xVals = new ArrayList<String>();
-                xVals.addAll(Arrays.asList(mMonths).subList(0, 12));
 
-                ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-                for(int i = 0 ; i < 12; i++ ) {
-                    yVals2.add(new BarEntry(counter[i], i));
-                }
 
-                BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
-                set1.setBarSpacePercent(35f);
-
-                ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
-                dataSets.add(set1);
-
-                BarData data = new BarData(xVals, dataSets);
-                // data.setValueFormatter(new MyValueFormatter());
-                data.setValueTextSize(10);
-                data.setValueTypeface(mTf);
-
-                mChart.setData(data);
-                mChart.invalidate();
-            }
-        });
 
         Button btnLogin= (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("test", "LoginButton Click");
-                setLoginData(12, 50);
+                setLoginData();
                 // setting data
                 mSeekBarY.setProgress(50);
                 mSeekBarX.setProgress(12);
@@ -210,11 +180,11 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
             @Override
             public void onClick(View v) {
                 Log.d("test", "PostButton Click");
-                setPostData(12, 50);
-                // setting data
-                mSeekBarY.setProgress(50);
-                mSeekBarX.setProgress(12);
-                mChart.invalidate();
+                setPostData();
+//                // setting data
+//                mSeekBarY.setProgress(50);
+//                mSeekBarX.setProgress(12);
+//                mChart.invalidate();
                 mTitle.setText("Post Analytics");
             }
         });
@@ -250,78 +220,113 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         return rootView;
     }
 
+    private void setPostData() {
+        final int [] counter = new int[12];
+        ParseQuery.getQuery("Post").findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                for(ParseObject object : objects) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(object.getCreatedAt());
+                    int month = cal.get(Calendar.MONTH);
+                    counter[month] = counter[month] + 1;
+                }
+                ArrayList<String> xVals = new ArrayList<String>();
+                xVals.addAll(Arrays.asList(mMonths).subList(0, 12));
 
-    private void setPostData(int count, float range) {
+                ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+                for(int i = 0 ; i < 12; i++ ) {
+                    yVals2.add(new BarEntry(counter[i], i));
+                }
 
-        ArrayList<String> xVals = new ArrayList<String>();
+                BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
+                set1.setBarSpacePercent(35f);
 
-        //add month
-        for (int i = 0; i < count; i++) {
-            xVals.add(mMonths[i % 12]);
-        }
+                ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+                dataSets.add(set1);
 
-        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+                BarData data = new BarData(xVals, dataSets);
+                // data.setValueFormatter(new MyValueFormatter());
+                data.setValueTextSize(10);
+                data.setValueTypeface(mTf);
 
-        //generate random value
-       /* for (int i = 0; i < count; i++) {
-            float mult = (range + 1);
-            float val = yVals1.get(i);
-            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
-            Log.d("test", String.valueOf(val));
-        }*/
+                mChart.setData(data);
+                mChart.invalidate();
+            }
+        });
+    }
+    private void setLoginData() {
+        ParseQuery.getQuery("Logintrack").findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                final int [] counter = new int[12];
+                for (ParseObject object : objects) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(object.getCreatedAt());
+                    int month = cal.get(Calendar.MONTH);
+                    counter[month] = counter[month] + 1;
+                }
+                ArrayList<String> xVals = new ArrayList<String>();
+                xVals.addAll(Arrays.asList(mMonths).subList(0, 12));
 
-        ArrayList<BarEntry> yVals2 = Analytics.yVals2;
+                ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+                for(int i = 0 ; i < 12; i++ ) {
+                    yVals2.add(new BarEntry(counter[i], i));
+                }
 
-        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
-        set1.setBarSpacePercent(35f);
+                BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
+                set1.setBarSpacePercent(35f);
 
-        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
-        dataSets.add(set1);
+                ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+                dataSets.add(set1);
 
-        BarData data = new BarData(xVals, dataSets);
-        // data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextSize(10);
-        data.setValueTypeface(mTf);
+                BarData data = new BarData(xVals, dataSets);
+                // data.setValueFormatter(new MyValueFormatter());
+                data.setValueTextSize(10);
+                data.setValueTypeface(mTf);
 
-        mChart.setData(data);
-
+                mChart.setData(data);
+                mChart.invalidate();
+            }
+        });
     }
 
-    private void setLoginData(int count, float range) {
-
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        //add month
-        for (int i = 0; i < count; i++) {
-            xVals.add(mMonths[i % 12]);
-        }
-
-        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-
-        //generate random value
-       /* for (int i = 0; i < count; i++) {
-            float mult = (range + 1);
-            float val = yVals1.get(i);
-            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
-            Log.d("test", String.valueOf(val));
-        }*/
-
-        ArrayList<BarEntry> yVals2 = Analytics.yVals3;
-
-        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
-        set1.setBarSpacePercent(35f);
-
-        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
-        dataSets.add(set1);
-
-        BarData data = new BarData(xVals, dataSets);
-        // data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextSize(10);
-        data.setValueTypeface(mTf);
-
-        mChart.setData(data);
-
-    }
+//    private void setLoginData(int count, float range) {
+//
+//
+//        ArrayList<String> xVals = new ArrayList<String>();
+//
+//        //add month
+//        for (int i = 0; i < count; i++) {
+//            xVals.add(mMonths[i % 12]);
+//        }
+//
+//        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+//
+//        //generate random value
+//       /* for (int i = 0; i < count; i++) {
+//            float mult = (range + 1);
+//            float val = yVals1.get(i);
+//            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
+//            Log.d("test", String.valueOf(val));
+//        }*/
+//
+//        ArrayList<BarEntry> yVals2 = Analytics.yVals3;
+//
+//        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
+//        set1.setBarSpacePercent(35f);
+//
+//        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+//        dataSets.add(set1);
+//
+//        BarData data = new BarData(xVals, dataSets);
+//        // data.setValueFormatter(new MyValueFormatter());
+//        data.setValueTextSize(10);
+//        data.setValueTypeface(mTf);
+//
+//        mChart.setData(data);
+//
+//    }
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
