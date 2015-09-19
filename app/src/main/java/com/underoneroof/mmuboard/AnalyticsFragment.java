@@ -29,11 +29,14 @@ import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.parse.CountCallback;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -153,7 +156,40 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         // l.setCustom(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
         // "def", "ghj", "ikl", "mno" });
 
-        setPostData(12, 50);
+
+        final int [] counter = new int[12];
+        ParseQuery.getQuery("Post").findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                for(ParseObject object : objects) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(object.getCreatedAt());
+                    int month = cal.get(Calendar.MONTH);
+                    counter[month] = counter[month] + 1;
+                }
+                ArrayList<String> xVals = new ArrayList<String>();
+                xVals.addAll(Arrays.asList(mMonths).subList(0, 12));
+
+                ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
+                for(int i = 0 ; i < 12; i++ ) {
+                    yVals2.add(new BarEntry(counter[i], i));
+                }
+
+                BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
+                set1.setBarSpacePercent(35f);
+
+                ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+                dataSets.add(set1);
+
+                BarData data = new BarData(xVals, dataSets);
+                // data.setValueFormatter(new MyValueFormatter());
+                data.setValueTextSize(10);
+                data.setValueTypeface(mTf);
+
+                mChart.setData(data);
+                mChart.invalidate();
+            }
+        });
 
         Button btnLogin= (Button) rootView.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {

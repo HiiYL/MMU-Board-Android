@@ -48,7 +48,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onResume() {
         loadFromParse();
-        loadAnalytic();
+//        loadAnalytic();
         if(Utility.isLecturer()) {
             mCreateSubjectButton.setVisibility(View.VISIBLE);
         }
@@ -276,10 +276,10 @@ public class MainActivityFragment extends Fragment {
                     });
         }
     }
-    void loadAnalytic(){
-        //load analytics data
-         Analytics runner = new Analytics();
-         runner.execute();
-    }
+//    void loadAnalytic(){
+//        //load analytics data
+//         Analytics runner = new Analytics();
+//         runner.execute();
+//    }
 
 }
