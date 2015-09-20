@@ -19,8 +19,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Subject.class);
         ParseObject.registerSubclass(Topic.class);
         ParseObject.registerSubclass(Post.class);

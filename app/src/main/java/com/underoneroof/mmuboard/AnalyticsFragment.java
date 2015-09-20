@@ -52,13 +52,11 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private SharedPreferences mPrefs;
     private TextView mTotal_user;
     private TextView mTotal_post;
     private TextView mTitle;
     private BarChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
     private Typeface mTf;
 
 
@@ -88,12 +86,9 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_analytics, container, false);
         mTotal_user = (TextView) rootView.findViewById(R.id.total_user);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mTotal_post = (TextView) rootView.findViewById(R.id.total_post);
         mTitle = (TextView) rootView.findViewById(R.id.title);
 
-        tvX = (TextView) rootView.findViewById(R.id.tvXMax);
-        tvY = (TextView) rootView.findViewById(R.id.tvYMax);
 
         mSeekBarX = (SeekBar) rootView.findViewById(R.id.seekBar1);
         mSeekBarY = (SeekBar) rootView.findViewById(R.id.seekBar2);
@@ -259,7 +254,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         ParseQuery.getQuery("Logintrack").findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
-                final int [] counter = new int[12];
+                final int[] counter = new int[12];
                 for (ParseObject object : objects) {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(object.getCreatedAt());
@@ -270,7 +265,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
                 xVals.addAll(Arrays.asList(mMonths).subList(0, 12));
 
                 ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-                for(int i = 0 ; i < 12; i++ ) {
+                for (int i = 0; i < 12; i++) {
                     yVals2.add(new BarEntry(counter[i], i));
                 }
 
@@ -290,43 +285,6 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
             }
         });
     }
-
-//    private void setLoginData(int count, float range) {
-//
-//
-//        ArrayList<String> xVals = new ArrayList<String>();
-//
-//        //add month
-//        for (int i = 0; i < count; i++) {
-//            xVals.add(mMonths[i % 12]);
-//        }
-//
-//        //ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-//
-//        //generate random value
-//       /* for (int i = 0; i < count; i++) {
-//            float mult = (range + 1);
-//            float val = yVals1.get(i);
-//            yVals2.add(new BarEntry(val, i)); //add value to first bar to last bar
-//            Log.d("test", String.valueOf(val));
-//        }*/
-//
-//        ArrayList<BarEntry> yVals2 = Analytics.yVals3;
-//
-//        BarDataSet set1 = new BarDataSet(yVals2, "DataSet");
-//        set1.setBarSpacePercent(35f);
-//
-//        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
-//        dataSets.add(set1);
-//
-//        BarData data = new BarData(xVals, dataSets);
-//        // data.setValueFormatter(new MyValueFormatter());
-//        data.setValueTextSize(10);
-//        data.setValueTypeface(mTf);
-//
-//        mChart.setData(data);
-//
-//    }
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {

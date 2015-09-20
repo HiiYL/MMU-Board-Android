@@ -34,11 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CreatePostFragment extends android.support.v4.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_TOPIC_OBJECT_ID = "topic_id";
 
-    // TODO: Rename and change types of parameters
     private String mTopicObjectId;
     public static final int PHOTO_PICKER_ID = 2;
     private Button submitBtn;
@@ -163,17 +160,4 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
         });
         return view;
     }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
 }

@@ -43,27 +43,16 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_SUBJECT_ACCESS = "subject_access";
-    private static final String ARG_PARAM2 = "param2";
 
     private String mSubjectObjectId;
     private String mSubjectName;
     private boolean mPushEnabled = false;
     private int mSubjectAccessLevel;
-    private ParseObject mSubject;
-    private String mParam2;
-//    private long mSubjectIndex;
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
     private AbsListView mListView;
 
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
     private TopicAdapter mAdapter;
     private FloatingActionButton mCreateSubjectButton;
 

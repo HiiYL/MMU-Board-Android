@@ -31,7 +31,6 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
                         .include("subject")
                         .include("user")
                         .whereEqualTo("subject", ParseObject.createWithoutData("Subject", subjectObjectId));
-//                        .fromLocalDatastore();
             }
         });
     }
@@ -44,13 +43,6 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
             v = View.inflate(getContext(), R.layout.listitem_subject_users, null);
         }
 
-        // Take advantage of ParseQueryAdapter's getItemView logic for
-        // populating the main TextView/ImageView.
-        // The IDs in your custom layout must match what ParseQueryAdapter expects
-        // if it will be populating a TextView or ImageView for you.
-//        super.getItemView(object, v, parent);
-
-        // Do additional configuration before returning the View.
 
         TextView usernameView = (TextView) v.findViewById(R.id.username);
         Spinner accessView = (Spinner) v.findViewById(R.id.access_status);
@@ -81,7 +73,6 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
         }
         usernameView.setText(object.getParseUser("user").getString("name"));
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
-//        titleView.setText(object.getString("title"));
         Picasso.with(parent.getContext())
                 .load(Gravatar.gravatarUrl(object.getParseUser("user").getEmail()))
                 .fit().into(profileView);

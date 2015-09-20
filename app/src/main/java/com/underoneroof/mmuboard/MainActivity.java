@@ -167,11 +167,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
 
                     case R.id.analytics:{
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                       /* AnalyticsFragment analyticsFragment = new AnalyticsFragment();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction1.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-                        fragmentTransaction1.replace(R.id.frame, analyticsFragment);
-                        fragmentTransaction1.commit();*/
 
                         AnalyticsFragment analyticsFragment = new AnalyticsFragment();
                         android.support.v4.app.FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
@@ -205,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             @Override
             public void onDrawerOpened(View drawerView) {
                 // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-                if(Utility.isLecturer()==false) {
+                if(!Utility.isLecturer()) {
                     navigationView.getMenu().findItem(R.id.analytics).setVisible(false);
                 }
                 else{

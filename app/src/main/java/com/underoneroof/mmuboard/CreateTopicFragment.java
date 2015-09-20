@@ -129,7 +129,6 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
                 Intent getIntent = new Intent();
                 getIntent.setType("image/*");
                 getIntent.setAction(Intent.ACTION_GET_CONTENT);
-//                getIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 pickIntent.setType("image/*");
 
@@ -141,8 +140,6 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
                 }catch(Exception e) {
                     startActivityForResult(getIntent, TOPIC_PHOTO_PICKER_ID);
                 }
-//                startActivityForResult(Intent.createChooser(intent,
-//                        "Complete action using"), TOPIC_PHOTO_PICKER_ID);
             }
         });
         submitBtn.setOnClickListener(new View.OnClickListener() {

@@ -36,13 +36,6 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
             v = View.inflate(getContext(), R.layout.listitem_subject, null);
         }
 
-        // Take advantage of ParseQueryAdapter's getItemView logic for
-        // populating the main TextView/ImageView.
-        // The IDs in your custom layout must match what ParseQueryAdapter expects
-        // if it will be populating a TextView or ImageView for you.
-//        super.getItemView(object, v, parent);
-
-        // Do additional configuration before returning the View.
         TextView descriptionView = (TextView) v.findViewById(R.id.description_text);
         TextView titleView = (TextView) v.findViewById(R.id.info_text);
         TextView usernameView = (TextView) v.findViewById(R.id.username);
@@ -50,6 +43,8 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         final TextView userCountView = (TextView) v.findViewById(R.id.user_count);
         final TextView topicCountView = (TextView) v.findViewById(R.id.topic_count);
         TextView dotView = (TextView) v.findViewById(R.id.dot);
+
+
         dotView.setText(Html.fromHtml(" \u25CF "));
         ParseObject subject =  object.getParseObject("subject");
         titleView.setText(subject.getString("title"));

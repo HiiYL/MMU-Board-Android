@@ -277,10 +277,5 @@ public class MainActivityFragment extends Fragment {
                     });
         }
     }
-//    void loadAnalytic(){
-//        //load analytics data
-//         Analytics runner = new Analytics();
-//         runner.execute();
-//    }
 
 }

@@ -16,10 +16,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.underoneroof.mmuboard.Adapter.SubjectUsersAdapter;
 public class SubjectUsersFragment extends android.support.v4.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "index";
-    private static final String ARG_PARAM2 = "param2";
     private OnFragmentInteractionListener mListener;
     private String mSubjectObjectId;
     private SubjectUsersAdapter mSubjectUsersAdapter;
@@ -73,7 +70,6 @@ public class SubjectUsersFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -97,7 +93,6 @@ public class SubjectUsersFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 

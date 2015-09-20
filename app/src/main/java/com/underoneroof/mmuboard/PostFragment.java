@@ -41,7 +41,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
     private FloatingActionButton mCreateSubjectButton;
     private int mSubjectAccessLevel;
     private ListView mListView;
-    private ParseObject mTopic;
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -146,18 +145,14 @@ public class PostFragment extends android.support.v4.app.Fragment {
         Log.d("SUBJECT ACCESS", String.valueOf(mSubjectAccessLevel));
         inflater.inflate(R.menu.menu_post_fragment, menu);
         MenuItem item = menu.findItem(R.id.action_remove_topic);
-        if(mSubjectAccessLevel == 3) {
+        if((mSubjectAccessLevel == 3) || ParseUser.getCurrentUser().getBoolean("isLecturer")) {
             item.setVisible(true);
         }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_remove_topic) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
@@ -193,7 +188,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
         return super.onOptionsItemSelected(item);
     }
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
     private void loadFromParse(final String topicObjectid) {

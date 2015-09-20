@@ -31,9 +31,6 @@ public class CreateSubjectActivity extends AppCompatActivity {
         createSubjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Subject subject = new Subject(subjectNameTextView.getText().toString(),
-//                        subjectDescriptionTextView.getText().toString());
-//                subject.save();
                 Subject subject = new Subject();
                 subject.put("title", subjectNameTextView.getText().toString());
                 subject.put("description", subjectDescriptionTextView.getText().toString());
@@ -49,13 +46,8 @@ public class CreateSubjectActivity extends AppCompatActivity {
                     public void done(ParseException e) {
                         Toast.makeText(CreateSubjectActivity.this, "Subject created successfully", Toast.LENGTH_SHORT).show();
                         finish();
-
                     }
                 });
-//                SubjectUser subjectUser = new SubjectUser(Session.getUser(CreateSubjectActivity.this), subject, true, true, true);
-//                subjectUser.save();
-
-
             }
         });
     }
@@ -70,12 +62,8 @@ public class CreateSubjectActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

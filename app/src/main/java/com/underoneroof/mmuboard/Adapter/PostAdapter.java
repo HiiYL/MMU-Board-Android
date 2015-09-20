@@ -18,6 +18,7 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
+import com.underoneroof.mmuboard.Model.User;
 import com.underoneroof.mmuboard.R;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 
@@ -29,6 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Hii on 09/09/2015.
+ *
  */
 public class PostAdapter extends ParseQueryAdapter<ParseObject> {
     public PostAdapter(Context context, final String topicObjectId) {
@@ -52,11 +54,10 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         TextView likeCountView = (TextView) v.findViewById(R.id.like_count);
         TextView timestamp = (TextView) v.findViewById(R.id.timestamp);
         ImageView imageView = (ImageView) v.findViewById(R.id.post_image);
+        final Button likeButton = (Button) v.findViewById(R.id.like_btn);
 
         PrettyTime p = new PrettyTime();
-
         timestamp.setText(p.format(object.getCreatedAt()));
-        final Button likeButton = (Button) v.findViewById(R.id.like_btn);
         final ArrayList<ParseObject> users;
         if(object.get("likedBy") == null) {
             users = new ArrayList<ParseObject>();

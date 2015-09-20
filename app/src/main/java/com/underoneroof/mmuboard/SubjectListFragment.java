@@ -127,18 +127,6 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         }
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        Activity a;
-//
-//        if (context instanceof Activity){
-//            a=(Activity) context;
-//        }
-//
-//    }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -148,12 +136,6 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
         void onFragmentInteraction(Uri uri);
     }
     private void loadSubjectUsers() {
-//        mSwipeRefreshLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-//            }
-//        });
         SubjectUser.getQuery().include("subject.createdBy")
                 .whereEqualTo("user", ParseUser.getCurrentUser())
                 .findInBackground(new FindCallback<SubjectUser>() {
