@@ -46,7 +46,7 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
     }
     @Override
     public View getItemView(final ParseObject object, View v, ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_post, null);
             holder = new ViewHolder();
@@ -106,9 +106,12 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
                 like_count + " user likes this post");
         ParseFile postImage = object.getParseFile("image");
         if(postImage != null) {
+            holder.imageView.setVisibility(View.VISIBLE);
             Uri imageUri = Uri.parse(postImage.getUrl());
             Picasso.with(getContext()).load(imageUri.toString())
                     .placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.imageView);
+        }else {
+            holder.imageView.setVisibility(View.GONE);
         }
 
 
