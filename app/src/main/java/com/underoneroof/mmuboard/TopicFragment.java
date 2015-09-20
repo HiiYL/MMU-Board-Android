@@ -61,8 +61,6 @@ public class TopicFragment extends android.support.v4.app.Fragment {
 
 
     private MenuItem mPushEnabledMenuItem;
-
-    //    private List<Topic> topics;
     public static TopicFragment newInstance(String index, String mSubjectName, int subjectAccessLevel) {
         TopicFragment f = new TopicFragment();
         // Supply index input as an argument.
@@ -182,17 +180,6 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             ((TextView) emptyView).setText(emptyText);
         }
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(String id);
     }

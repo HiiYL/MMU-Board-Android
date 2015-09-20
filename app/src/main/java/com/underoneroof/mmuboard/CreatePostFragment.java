@@ -18,7 +18,10 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
@@ -35,13 +38,14 @@ import java.util.Date;
 
 public class CreatePostFragment extends android.support.v4.app.Fragment {
     private static final String ARG_TOPIC_OBJECT_ID = "topic_id";
-
+    private static final String ARG_TOPIC_NAME = "topic_name";
     private String mTopicObjectId;
     public static final int PHOTO_PICKER_ID = 2;
     private Button submitBtn;
     private Button uploadImageBtn;
     private ProgressBar uploadProgressBar;
     private ImageView imagePreviewView;
+    private String mTopicName;
     private Post post;
 
     @Override
@@ -82,10 +86,11 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public static CreatePostFragment newInstance(String param1) {
+    public static CreatePostFragment newInstance(String param1, String topicName) {
         CreatePostFragment fragment = new CreatePostFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TOPIC_OBJECT_ID, param1);
+        args.putString(ARG_TOPIC_NAME, topicName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -99,6 +104,7 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTopicObjectId = getArguments().getString(ARG_TOPIC_OBJECT_ID);
+            mTopicName = getArguments().getString(ARG_TOPIC_NAME);
         }
     }
 
@@ -151,11 +157,9 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
                         public void done(ParseException e) {
                             Toast.makeText(getActivity(), "Post saved successfully", Toast.LENGTH_SHORT).show();
                             getFragmentManager().popBackStack();
-
                         }
                     });
                 }
-
             }
         });
         return view;

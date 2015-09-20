@@ -91,21 +91,17 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                                     " has been accepted!", Toast.LENGTH_SHORT).show();
                                         }
 
-                                        subjectUser.saveEventually(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                if (subjectUser.getInt("status") != 1) {
+                                        subjectUser.saveEventually();
+                                        if (subjectUser.getInt("status") != 1) {
 //                                                    view.setClickable(true);
-                                                    loadFromParse();
-                                                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"), subjectUser.getInt("status"));
-                                                    android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                                                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-                                                    fragmentTransaction.replace(R.id.frame, topicFragment);
-                                                    fragmentTransaction.addToBackStack("tag").commit();
+                                            loadFromParse();
+                                            TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"), subjectUser.getInt("status"));
+                                            android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                                            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                                            fragmentTransaction.replace(R.id.frame, topicFragment);
+                                            fragmentTransaction.addToBackStack("tag").commit();
 
-                                                }
-                                            }
-                                        });
+                                        }
                                         mSubjectListAdapter.loadObjects();
                                     } else {
                                         Toast.makeText(getActivity(), "UHOH SOMETHING BAD HAPPENED", Toast.LENGTH_SHORT).show();

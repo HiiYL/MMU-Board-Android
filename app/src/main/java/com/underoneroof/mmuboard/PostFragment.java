@@ -20,6 +20,7 @@ import android.widget.ListView;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
@@ -30,6 +31,7 @@ import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
+import java.util.ArrayList;
 import java.util.List;
 public class PostFragment extends android.support.v4.app.Fragment {
 
@@ -44,6 +46,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MenuItem mPushEnabledMenuItem;
+    private boolean mPushEnabled;
 
     public static PostFragment newInstance(String topic_index, String title, int subjectAccessLevel) {
         PostFragment fragment = new PostFragment();
@@ -106,7 +110,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
         View.OnClickListener createSubjectButtonClickListener =  new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreatePostFragment createPostFragment = CreatePostFragment.newInstance(mTopicObjectId);
+                CreatePostFragment createPostFragment = CreatePostFragment.newInstance(mTopicObjectId, mTopicTitle);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, createPostFragment);
@@ -117,8 +121,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
         emptyCreateSubjectButton.setOnClickListener(createSubjectButtonClickListener);
         return view;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -147,6 +149,20 @@ public class PostFragment extends android.support.v4.app.Fragment {
         MenuItem item = menu.findItem(R.id.action_remove_topic);
         if((mSubjectAccessLevel == 3) || ParseUser.getCurrentUser().getBoolean("isLecturer")) {
             item.setVisible(true);
+        }
+        MenuItem subscribeItem = menu.findItem(R.id.action_subscribe);
+        if (item != null) {
+            mPushEnabledMenuItem = subscribeItem;
+            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+            ArrayList<ParseObject> topics = (ArrayList<ParseObject>) parseInstallation.get("topics");
+            if(topics != null && topics.contains(ParseObject.createWithoutData("Topic", mTopicObjectId))) {
+                subscribeItem.setIcon(R.drawable.ic_notifications_active_white_24dp);
+                mPushEnabled = true;
+            }
+        }
+        else {
+            Log.e("MENUITEM", " MENU ITEM IS EMPTY");
+
         }
     }
     @Override
@@ -184,6 +200,40 @@ public class PostFragment extends android.support.v4.app.Fragment {
 
             return true;
         }
+        if (id == R.id.action_subscribe) {
+            ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+            if(mPushEnabled) {
+                ArrayList<ParseObject> topics = new ArrayList<ParseObject>();
+                topics.add(ParseObject.createWithoutData("Topic", mTopicObjectId));
+                parseInstallation.removeAll("topics", topics);
+                parseInstallation.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mPushEnabled = false;
+                        if (mPushEnabledMenuItem != null) {
+                            mPushEnabledMenuItem.setIcon(R.drawable.ic_notifications_none_white_24dp);
+
+                        } else {
+                            Log.e("PUSH ENABLED", "PUSH ENABLED MENU ITEM IS NULL");
+                        }
+                    }
+                });
+            }else {
+                parseInstallation.add("topics", ParseObject.createWithoutData("Topic", mTopicObjectId));
+                parseInstallation.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mPushEnabled = true;
+                        if (mPushEnabledMenuItem != null) {
+                            mPushEnabledMenuItem.setIcon(R.drawable.ic_notifications_active_white_24dp);
+                        } else {
+                            Log.e("PUSH ENABLED", "PUSH ENABLED MENU ITEM IS NULL");
+                        }
+                    }
+                });
+
+            }
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -210,8 +260,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
                             ParseObject.unpinAllInBackground("PostAdapter" + topicObjectid, new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if(e== null) {
-                                        ParseObject.pinAllInBackground("PostAdapter"+ topicObjectid,posts,
+                                    if (e == null) {
+                                        ParseObject.pinAllInBackground("PostAdapter" + topicObjectid, posts,
                                                 new SaveCallback() {
                                                     @Override
                                                     public void done(com.parse.ParseException e) {
@@ -219,7 +269,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                                         mSwipeRefreshLayout.setRefreshing(false);
                                                     }
                                                 });
-                                    }else {
+                                    } else {
                                         Log.e("Post Adapter" + topicObjectid, "DELETION FAILED");
                                     }
                                 }
