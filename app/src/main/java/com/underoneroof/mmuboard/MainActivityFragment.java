@@ -102,7 +102,8 @@ public class MainActivityFragment extends Fragment {
                     Toast.makeText(getActivity(), "You do not have permission to view this topic", Toast.LENGTH_SHORT).show();
                 } else {
                     ParseObject subject = mSubjectAdapter.getItem(position).getParseObject("subject");
-                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
+                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(),
+                            subject.getString("title"),mSubjectAdapter.getItem(position).getInt("status"));
                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
 

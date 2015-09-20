@@ -168,9 +168,9 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
                 Log.d("test", "LoginButton Click");
                 setLoginData();
                 // setting data
-                mSeekBarY.setProgress(50);
-                mSeekBarX.setProgress(12);
-                mChart.invalidate();
+//                mSeekBarY.setProgress(50);
+//                mSeekBarX.setProgress(12);
+//                mChart.invalidate();
                 mTitle.setText("User Login Analytics");
             }
         });

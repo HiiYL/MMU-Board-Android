@@ -84,7 +84,7 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
 //        titleView.setText(object.getString("title"));
         Picasso.with(parent.getContext())
                 .load(Gravatar.gravatarUrl(object.getParseUser("user").getEmail()))
-                .into(profileView);
+                .fit().into(profileView);
         return v;
     }
 }

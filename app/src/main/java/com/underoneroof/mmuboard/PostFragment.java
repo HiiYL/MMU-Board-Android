@@ -21,6 +21,9 @@ import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.PostAdapter;
 import com.underoneroof.mmuboard.Model.Post;
@@ -29,30 +32,26 @@ import com.underoneroof.mmuboard.Utility.Utility;
 
 import java.util.List;
 public class PostFragment extends android.support.v4.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    private static final String ARG_SUBJECT_ACCESS = "subject_access";
+
     private String mTopicObjectId;
     private String mTopicTitle;
-    private String mParam2;
-    private long mTopicIndex;
     private PostAdapter mAdapter;
     private FloatingActionButton mCreateSubjectButton;
-    private List<ParseObject> posts;
+    private int mSubjectAccessLevel;
     private ListView mListView;
     private ParseObject mTopic;
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    public static PostFragment newInstance(String topic_index, String title) {
+    public static PostFragment newInstance(String topic_index, String title, int subjectAccessLevel) {
         PostFragment fragment = new PostFragment();
         Bundle args = new Bundle();
         args.putString("index", topic_index);
         args.putString("title", title);
+        args.putInt(ARG_SUBJECT_ACCESS, subjectAccessLevel);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,6 +78,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mTopicObjectId = getArguments().getString("index");
             mTopicTitle = getArguments().getString("title");
+            mSubjectAccessLevel = getArguments().getInt(ARG_SUBJECT_ACCESS);
+
             mAdapter = new PostAdapter(getActivity(), mTopicObjectId);
         }
     }
@@ -142,7 +143,12 @@ public class PostFragment extends android.support.v4.app.Fragment {
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d("SUBJECT ACCESS", String.valueOf(mSubjectAccessLevel));
         inflater.inflate(R.menu.menu_post_fragment, menu);
+        MenuItem item = menu.findItem(R.id.action_remove_topic);
+        if(mSubjectAccessLevel == 3) {
+            item.setVisible(true);
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

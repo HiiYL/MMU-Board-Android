@@ -63,7 +63,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                 if (e == null) {
                                     if (object.getInt("status") != 1) {
                                         ParseObject subject = object.getParseObject("subject");
-                                        TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
+                                        TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"), object.getInt("status"));
                                         android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                                         fragmentTransaction.replace(R.id.frame, topicFragment);
@@ -97,7 +97,7 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                                                 if (subjectUser.getInt("status") != 1) {
 //                                                    view.setClickable(true);
                                                     loadFromParse();
-                                                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"));
+                                                    TopicFragment topicFragment = TopicFragment.newInstance(subject.getObjectId(), subject.getString("title"), subjectUser.getInt("status"));
                                                     android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                                     fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                                                     fragmentTransaction.replace(R.id.frame, topicFragment);

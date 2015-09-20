@@ -42,12 +42,13 @@ import java.util.List;
 public class TopicFragment extends android.support.v4.app.Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_SUBJECT_ACCESS = "subject_access";
     private static final String ARG_PARAM2 = "param2";
 
     private String mSubjectObjectId;
     private String mSubjectName;
     private boolean mPushEnabled = false;
+    private int mSubjectAccessLevel;
     private ParseObject mSubject;
     private String mParam2;
 //    private long mSubjectIndex;
@@ -73,12 +74,13 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     private MenuItem mPushEnabledMenuItem;
 
     //    private List<Topic> topics;
-    public static TopicFragment newInstance(String index, String mSubjectName) {
+    public static TopicFragment newInstance(String index, String mSubjectName, int subjectAccessLevel) {
         TopicFragment f = new TopicFragment();
         // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putString("index", index);
         args.putString("subject_name", mSubjectName);
+        args.putInt(ARG_SUBJECT_ACCESS, subjectAccessLevel);
         f.setArguments(args);
         return f;
     }
@@ -98,6 +100,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mSubjectObjectId = getArguments().getString("index");
             mSubjectName = getArguments().getString("subject_name");
+            mSubjectAccessLevel = getArguments().getInt(ARG_SUBJECT_ACCESS);
             mAdapter = new TopicAdapter(getActivity(), mSubjectObjectId);
         }
     }
@@ -151,7 +154,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ParseObject topic = mAdapter.getItem(position);
-                PostFragment postFragment = PostFragment.newInstance(topic.getObjectId(), topic.getString("title"));
+                PostFragment postFragment = PostFragment.newInstance(topic.getObjectId(), topic.getString("title"),mSubjectAccessLevel);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                 fragmentTransaction.replace(R.id.frame, postFragment);
