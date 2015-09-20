@@ -58,8 +58,7 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
                 Uri imageUri = data.getData();
                 byte[] bbytes = Utility.convertImageToByte(imageUri, getActivity());
                 ParseFile parseFile = new ParseFile(Utility.getFileName(imageUri, getActivity()),bbytes);
-                post.put("image", parseFile);
-                Log.d("Image File Name", Utility.getFileName(imageUri, getActivity()));
+                post.setImage(parseFile);
                 uploadProgressBar.setVisibility(View.VISIBLE);
                 imagePreviewView.setImageURI(imageUri);
                 parseFile.saveInBackground(new SaveCallback() {
@@ -158,9 +157,9 @@ public class CreateTopicFragment extends android.support.v4.app.Fragment {
                     topic.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            post.put("contents", sContents);
+                            post.setContents(sContents);
                             post.put("createdBy", ParseUser.getCurrentUser());
-                            post.put("topic", ParseObject.createWithoutData("Topic", topic.getObjectId()));
+                            post.setTopic(ParseObject.createWithoutData("Topic", topic.getObjectId()));
 
                             post.saveEventually(new SaveCallback() {
                                 @Override

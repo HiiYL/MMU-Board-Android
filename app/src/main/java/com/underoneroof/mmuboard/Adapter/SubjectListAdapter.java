@@ -12,6 +12,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.underoneroof.mmuboard.Common.AccessLevel;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.R;
 
@@ -58,23 +59,7 @@ public class SubjectListAdapter extends ParseQueryAdapter<ParseObject> {
                     @Override
                     public void done(ParseObject object, ParseException e) {
                         if (e == null) {
-                            switch (object.getInt("status")) {
-                                case 0:
-                                    finalHolder.accessBtn.setText("UH-OH SOMETHING WENT WRONG");
-                                    break;
-                                case 1:
-                                    finalHolder.accessBtn.setText("PENDING");
-                                    break;
-                                case 2:
-                                    finalHolder.accessBtn.setText("MEMBER");
-                                    break;
-                                case 3:
-                                    finalHolder.accessBtn.setText("ADMIN");
-                                    break;
-                                default:
-                                    finalHolder.accessBtn.setText(object.getInt("status"));
-                                    break;
-                            }
+                            finalHolder.accessBtn.setText(AccessLevel.values()[object.getInt("status")].name());
                         } else {
                             if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
                                 finalHolder.accessBtn.setText("NOT A MEMBER");

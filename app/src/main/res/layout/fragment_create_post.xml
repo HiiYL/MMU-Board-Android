@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/md_material_blue_600"
+                android:background="@color/wallet_holo_blue_light"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="Submit"

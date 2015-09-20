@@ -33,6 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  *
  */
 public class PostAdapter extends ParseQueryAdapter<ParseObject> {
+    PrettyTime p = new PrettyTime();
     public PostAdapter(Context context, final String topicObjectId) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery<ParseObject> create() {
@@ -60,8 +61,6 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         }else {
             holder = (ViewHolder) v.getTag ();
         }
-
-        PrettyTime p = new PrettyTime();
         holder.timestamp.setText(p.format(object.getCreatedAt()));
         final ArrayList<ParseObject> users;
         if(object.get("likedBy") == null) {

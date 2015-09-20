@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements TopicFragment.OnF
             parseInstallation.remove("user");
             parseInstallation.add("user", ParseUser.getCurrentUser());
             parseInstallation.saveInBackground();
-            Log.d("MyApp", "onActivityResult in MainActivity is called");
             email = (TextView) findViewById(R.id.email);
             username = (TextView) findViewById(R.id.username);
             ParseUser currentUser = ParseUser.getCurrentUser();

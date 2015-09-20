@@ -51,7 +51,6 @@ public class SubjectUsersFragment extends android.support.v4.app.Fragment {
                         public void done(ParseObject object, ParseException e) {
                             if(object != null) {
                                 mSubjectUsersAdapter.enableSpinner();
-                                Log.d("SPINNER", "SPINNER ENABLED");
                             }
                         }
                     });

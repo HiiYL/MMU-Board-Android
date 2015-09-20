@@ -18,12 +18,13 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectListAdapter;
+import com.underoneroof.mmuboard.Interface.FragmentParseLocalInterface;
 import com.underoneroof.mmuboard.Model.Subject;
 import com.underoneroof.mmuboard.Model.SubjectUser;
 
 import java.util.List;
 
-public class SubjectListFragment extends android.support.v4.app.Fragment {
+public class SubjectListFragment extends android.support.v4.app.Fragment implements FragmentParseLocalInterface {
 
     private OnFragmentInteractionListener mListener;
     private ListView mListView;
@@ -160,7 +161,8 @@ public class SubjectListFragment extends android.support.v4.app.Fragment {
                     }
                 });
     }
-    private void loadFromParse() {
+    @Override
+    public void loadFromParse() {
         Subject.getQuery().findInBackground(new FindCallback<Subject>() {
             @Override
             public void done(final List<Subject> subjects, com.parse.ParseException e) {

@@ -23,6 +23,7 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.SubjectAdapter;
+import com.underoneroof.mmuboard.Interface.FragmentParseLocalInterface;
 import com.underoneroof.mmuboard.Model.Analytics;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.SubjectUser;
@@ -35,7 +36,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements FragmentParseLocalInterface {
     private ListView mListView;
     private ParseQueryAdapter<ParseObject> mSubjectAdapter;
     private FloatingActionButton mCreateSubjectButton;
@@ -48,7 +49,6 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onResume() {
         loadFromParse();
-//        loadAnalytic();
         if(Utility.isLecturer()) {
             mCreateSubjectButton.setVisibility(View.VISIBLE);
         }
@@ -59,7 +59,6 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSubjectAdapter = new SubjectAdapter(getActivity());
-        Log.d("ONCREATE", "ONCREATE CALLED");
     }
 
 
@@ -257,7 +256,6 @@ public class MainActivityFragment extends Fragment {
                                                         @Override
                                                         public void done(com.parse.ParseException e) {
                                                             if(is_last && ( topic == topics.get(topics.size() - 1) ) ) {
-                                                                Log.d("PARSE LOAD ALL", "SHOULD ONLY BE CALLED ONCE" );
                                                                 mSubjectAdapter.loadObjects();
                                                                 mSwipeRefreshLayout.setRefreshing(false);
                                                             }

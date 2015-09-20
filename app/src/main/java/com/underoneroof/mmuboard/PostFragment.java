@@ -27,13 +27,14 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.PostAdapter;
+import com.underoneroof.mmuboard.Interface.FragmentParseLocalInterface;
 import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
-public class PostFragment extends android.support.v4.app.Fragment {
+public class PostFragment extends android.support.v4.app.Fragment implements FragmentParseLocalInterface {
 
     private static final String ARG_SUBJECT_ACCESS = "subject_access";
 
@@ -67,7 +68,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         if(Utility.isConnectedToNetwork(getActivity())) {
-            loadFromParse(mTopicObjectId);
+            loadFromParse();
         }else {
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -92,7 +93,7 @@ public class PostFragment extends android.support.v4.app.Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadFromParse(mTopicObjectId);
+                loadFromParse();
             }
         });
     }
@@ -144,7 +145,6 @@ public class PostFragment extends android.support.v4.app.Fragment {
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d("SUBJECT ACCESS", String.valueOf(mSubjectAccessLevel));
         inflater.inflate(R.menu.menu_post_fragment, menu);
         MenuItem item = menu.findItem(R.id.action_remove_topic);
         if((mSubjectAccessLevel == 3) || ParseUser.getCurrentUser().getBoolean("isLecturer")) {
@@ -240,7 +240,8 @@ public class PostFragment extends android.support.v4.app.Fragment {
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
     }
-    private void loadFromParse(final String topicObjectid) {
+    @Override
+    public void loadFromParse() {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -252,16 +253,16 @@ public class PostFragment extends android.support.v4.app.Fragment {
         Post.getQuery()
                 .include("createdBy")
                 .orderByDescending("createdAt")
-                .whereEqualTo("topic", ParseObject.createWithoutData("Topic", topicObjectid))
+                .whereEqualTo("topic", ParseObject.createWithoutData("Topic", mTopicObjectId))
                 .findInBackground(new FindCallback<Post>() {
                     @Override
                     public void done(final List<Post> posts, com.parse.ParseException e) {
                         if (e == null) {
-                            ParseObject.unpinAllInBackground("PostAdapter" + topicObjectid, new DeleteCallback() {
+                            ParseObject.unpinAllInBackground("PostAdapter" + mTopicObjectId, new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     if (e == null) {
-                                        ParseObject.pinAllInBackground("PostAdapter" + topicObjectid, posts,
+                                        ParseObject.pinAllInBackground("PostAdapter" + mTopicObjectId, posts,
                                                 new SaveCallback() {
                                                     @Override
                                                     public void done(com.parse.ParseException e) {
@@ -270,12 +271,12 @@ public class PostFragment extends android.support.v4.app.Fragment {
                                                     }
                                                 });
                                     } else {
-                                        Log.e("Post Adapter" + topicObjectid, "DELETION FAILED");
+                                        Log.e("Post Adapter" + mTopicObjectId, "DELETION FAILED");
                                     }
                                 }
                             });
                         } else {
-                            Log.i("Post Adapter" + topicObjectid,
+                            Log.i("Post Adapter" + mTopicObjectId,
                                     "loadFromParse: Error finding pinned todos: "
                                             + e.getMessage());
                         }

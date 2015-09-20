@@ -24,22 +24,14 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 import com.underoneroof.mmuboard.Adapter.TopicAdapter;
+import com.underoneroof.mmuboard.Interface.FragmentParseLocalInterface;
 import com.underoneroof.mmuboard.Model.Topic;
 import com.underoneroof.mmuboard.Utility.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class TopicFragment extends android.support.v4.app.Fragment {
+public class TopicFragment extends android.support.v4.app.Fragment implements FragmentParseLocalInterface {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_SUBJECT_ACCESS = "subject_access";
@@ -94,7 +86,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         if(Utility.isConnectedToNetwork(getActivity())) {
-            loadFromParse(mSubjectObjectId);
+            loadFromParse();
         }else {
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -118,7 +110,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadFromParse(mSubjectObjectId);
+                loadFromParse();
             }
         });
 
@@ -183,7 +175,8 @@ public class TopicFragment extends android.support.v4.app.Fragment {
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(String id);
     }
-    private void loadFromParse(final String subjectObjectId) {
+    @Override
+    public void loadFromParse() {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -194,16 +187,16 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         });
         Topic.getQuery()
                 .include("createdBy")
-                .whereEqualTo("subject", ParseObject.createWithoutData("Subject", subjectObjectId))
+                .whereEqualTo("subject", ParseObject.createWithoutData("Subject", mSubjectObjectId))
         .findInBackground(new FindCallback<Topic>() {
             @Override
             public void done(final List<Topic> topics, com.parse.ParseException e) {
                 if (e == null) {
-                    ParseObject.unpinAllInBackground("Topic Adapter" + subjectObjectId, new DeleteCallback() {
+                    ParseObject.unpinAllInBackground("Topic Adapter" + mSubjectObjectId, new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                ParseObject.pinAllInBackground("Topic Adapter" + subjectObjectId, topics,
+                                ParseObject.pinAllInBackground("Topic Adapter" + mSubjectObjectId, topics,
                                         new SaveCallback() {
                                             @Override
                                             public void done(com.parse.ParseException e) {
@@ -212,7 +205,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                                             }
                                         });
                             } else {
-                                Log.e("Topic Adapter" + subjectObjectId,
+                                Log.e("Topic Adapter" + mSubjectObjectId,
                                         "loadFromParse: Error finding pinned todos: "
                                                 + e.getMessage());
                             }
@@ -220,7 +213,7 @@ public class TopicFragment extends android.support.v4.app.Fragment {
                         }
                     });
                 } else {
-                    Log.e("Topic Adapter" + subjectObjectId, "DELETE FAILED");
+                    Log.e("Topic Adapter" + mSubjectObjectId, "DELETE FAILED");
                 }
 
             }
@@ -256,14 +249,9 @@ public class TopicFragment extends android.support.v4.app.Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_add_user) {
-            SubjectStatsFragment subjectUsersFragment = SubjectStatsFragment.newInstance(mSubjectObjectId);
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-            fragmentTransaction.replace(R.id.frame, subjectUsersFragment);
-            fragmentTransaction.addToBackStack( "tag" ).commit();
-            return true;
-        }
+//        if (id == R.id.action_add_user) {
+//            return true;
+//        }
         if (id == R.id.action_subscribe) {
             ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
             if(mPushEnabled) {

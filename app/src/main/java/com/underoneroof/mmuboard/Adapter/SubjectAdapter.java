@@ -10,6 +10,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+import com.underoneroof.mmuboard.Common.AccessLevel;
 import com.underoneroof.mmuboard.R;
 
 //import com.parse.ParseQueryAdapter;
@@ -48,9 +49,6 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
             holder = (ViewHolder) v.getTag ();
         }
 
-
-
-
         holder.dotView.setText(Html.fromHtml(" \u25CF "));
         ParseObject subject =  object.getParseObject("subject");
         holder.titleView.setText(subject.getString("title"));
@@ -60,20 +58,7 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
         long user_count = subject.getLong("user_count");
         holder.topicCountView.setText( topic_count + (topic_count > 1 ? " Topics " : " Topic"));
         holder.userCountView.setText(user_count + (user_count > 1 ? " Users " : " User "));
-        switch(object.getInt("status")) {
-            case 1:
-                holder.accessView.setText("PENDING");
-                break;
-            case 2:
-                holder.accessView.setText("MEMBER");
-                break;
-            case 3:
-                holder.accessView.setText("ADMIN");
-                break;
-            default:
-                holder.accessView.setText("UNKNOWN");
-                break;
-        }
+        holder.accessView.setText(AccessLevel.values()[object.getInt("status")].name());
         return v;
     }
     static class ViewHolder {

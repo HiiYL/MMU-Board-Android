@@ -160,12 +160,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("test", "LoginButton Click");
                 setLoginData();
-                // setting data
-//                mSeekBarY.setProgress(50);
-//                mSeekBarX.setProgress(12);
-//                mChart.invalidate();
                 mTitle.setText("User Login Analytics");
             }
         });
@@ -174,12 +169,7 @@ public class AnalyticsFragment extends android.support.v4.app.Fragment implement
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("test", "PostButton Click");
                 setPostData();
-//                // setting data
-//                mSeekBarY.setProgress(50);
-//                mSeekBarX.setProgress(12);
-//                mChart.invalidate();
                 mTitle.setText("Post Analytics");
             }
         });

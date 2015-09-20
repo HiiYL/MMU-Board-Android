@@ -58,7 +58,6 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
                 byte[] bbytes = Utility.convertImageToByte(imageUri, getActivity());
                 ParseFile parseFile = new ParseFile(Utility.getFileName(imageUri, getActivity()),bbytes);
                 post.put("image", parseFile);
-                Log.d("Image File Name", Utility.getFileName(imageUri, getActivity()));
                 uploadProgressBar.setVisibility(View.VISIBLE);
                 imagePreviewView.setImageURI(imageUri);
                 parseFile.saveInBackground(new SaveCallback() {
@@ -143,14 +142,8 @@ public class CreatePostFragment extends android.support.v4.app.Fragment {
                     Toast.makeText(getActivity(), "Contents can't be empty!", Toast.LENGTH_SHORT).show();
                 }else {
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.DAY_OF_MONTH, 1);
-                    calendar.set(Calendar.MONTH,7);
-                    Date date = calendar.getTime();
-
                     post.put("contents", sContents);
-                    post.put("createdBy", ParseUser.getCurrentUser());
-                    //post.put("createdAt", "2015-08-16T14:46:05.846Z");
+                    post.setCreatedBy(ParseUser.getCurrentUser());
                     post.put("topic", ParseObject.createWithoutData("Topic", mTopicObjectId));
                     post.saveEventually(new SaveCallback() {
                         @Override
