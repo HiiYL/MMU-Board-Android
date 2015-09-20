@@ -32,43 +32,59 @@ public class SubjectAdapter extends ParseQueryAdapter<ParseObject> {
     }
     @Override
     public View getItemView(ParseObject object, View v, ViewGroup parent) {
+        ViewHolder holder = null;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_subject, null);
+            holder = new ViewHolder();
+            holder.descriptionView = (TextView) v.findViewById(R.id.description_text);
+            holder.titleView = (TextView) v.findViewById(R.id.info_text);
+            holder.usernameView = (TextView) v.findViewById(R.id.username);
+            holder.accessView = (TextView) v.findViewById(R.id.access_status);
+            holder.userCountView = (TextView) v.findViewById(R.id.user_count);
+            holder.topicCountView = (TextView) v.findViewById(R.id.topic_count);
+            holder.dotView = (TextView) v.findViewById(R.id.dot);
+            v.setTag(holder);
+        }else {
+            holder = (ViewHolder) v.getTag ();
         }
 
-        TextView descriptionView = (TextView) v.findViewById(R.id.description_text);
-        TextView titleView = (TextView) v.findViewById(R.id.info_text);
-        TextView usernameView = (TextView) v.findViewById(R.id.username);
-        TextView accessView = (TextView) v.findViewById(R.id.access_status);
-        final TextView userCountView = (TextView) v.findViewById(R.id.user_count);
-        final TextView topicCountView = (TextView) v.findViewById(R.id.topic_count);
-        TextView dotView = (TextView) v.findViewById(R.id.dot);
 
 
-        dotView.setText(Html.fromHtml(" \u25CF "));
+
+        holder.dotView.setText(Html.fromHtml(" \u25CF "));
         ParseObject subject =  object.getParseObject("subject");
-        titleView.setText(subject.getString("title"));
-        descriptionView.setText(subject.getString("description"));
-        usernameView.setText(subject.getParseUser("createdBy").getString("name"));
+        holder.titleView.setText(subject.getString("title"));
+        holder.descriptionView.setText(subject.getString("description"));
+        holder.usernameView.setText(subject.getParseUser("createdBy").getString("name"));
         long topic_count = subject.getLong("topic_count");
         long user_count = subject.getLong("user_count");
-        topicCountView.setText( topic_count + (topic_count > 1 ? " Topics " : " Topic"));
-        userCountView.setText(user_count + (user_count > 1 ? " Users " : " User "));
+        holder.topicCountView.setText( topic_count + (topic_count > 1 ? " Topics " : " Topic"));
+        holder.userCountView.setText(user_count + (user_count > 1 ? " Users " : " User "));
         switch(object.getInt("status")) {
             case 1:
-                accessView.setText("PENDING");
+                holder.accessView.setText("PENDING");
                 break;
             case 2:
-                accessView.setText("MEMBER");
+                holder.accessView.setText("MEMBER");
                 break;
             case 3:
-                accessView.setText("ADMIN");
+                holder.accessView.setText("ADMIN");
                 break;
             default:
-                accessView.setText("UNKNOWN");
+                holder.accessView.setText("UNKNOWN");
                 break;
         }
         return v;
     }
+    static class ViewHolder {
+        TextView descriptionView;
+        TextView titleView;
+        TextView usernameView;
+        TextView accessView;
+        TextView userCountView;
+        TextView topicCountView;
+        TextView dotView;
+    }
+
 
 }

@@ -32,22 +32,29 @@ public class TopicAdapter extends ParseQueryAdapter<ParseObject> {
     }
     @Override
     public View getItemView(ParseObject object, View v, ViewGroup parent) {
+        ViewHolder holder = null;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_topic, null);
+            holder = new ViewHolder();
+            holder.titleView = (TextView) v.findViewById(R.id.info_text);
+            holder.usernameView = (TextView) v.findViewById(R.id.username);
+            holder.postCountView = (TextView) v.findViewById(R.id.post_count);
+            v.setTag(holder);
+        }else {
+            holder = (ViewHolder) v.getTag ();
         }
-
-        // Do additional configuration before returning the View.
-        TextView titleView = (TextView) v.findViewById(R.id.info_text);
-        TextView usernameView = (TextView) v.findViewById(R.id.username);
-        final TextView postCountView = (TextView) v.findViewById(R.id.post_count);
-
         long post_count = object.getLong("post_count");
-
-        postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post ") +
+        holder.postCountView.setText(post_count + (post_count > 1 ? " Posts " : " Post ") +
                 Html.fromHtml(" \u25CF ") + p.format(object.getCreatedAt()) );
 
-        titleView.setText(object.getString("title"));
-        usernameView.setText(object.getParseUser("createdBy").getString("name"));
+        holder.titleView.setText(object.getString("title"));
+        holder.usernameView.setText(object.getParseUser("createdBy").getString("name"));
         return v;
+    }
+    static class ViewHolder {
+        TextView titleView ;
+        TextView usernameView;
+        TextView postCountView;
+
     }
 }

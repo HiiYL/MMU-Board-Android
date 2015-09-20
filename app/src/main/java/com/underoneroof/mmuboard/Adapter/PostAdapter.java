@@ -46,18 +46,23 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
     }
     @Override
     public View getItemView(final ParseObject object, View v, ViewGroup parent) {
+        ViewHolder holder = null;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_post, null);
+            holder = new ViewHolder();
+            holder.contentsView = (TextView) v.findViewById(R.id.contents);
+            holder.usernameView = (TextView) v.findViewById(R.id.username);
+            holder.likeCountView = (TextView) v.findViewById(R.id.like_count);
+            holder.timestamp = (TextView) v.findViewById(R.id.timestamp);
+            holder.imageView = (ImageView) v.findViewById(R.id.post_image);
+            holder.likeButton = (Button) v.findViewById(R.id.like_btn);
+            v.setTag(holder);
+        }else {
+            holder = (ViewHolder) v.getTag ();
         }
-        TextView contentsView = (TextView) v.findViewById(R.id.contents);
-        TextView usernameView = (TextView) v.findViewById(R.id.username);
-        TextView likeCountView = (TextView) v.findViewById(R.id.like_count);
-        TextView timestamp = (TextView) v.findViewById(R.id.timestamp);
-        ImageView imageView = (ImageView) v.findViewById(R.id.post_image);
-        final Button likeButton = (Button) v.findViewById(R.id.like_btn);
 
         PrettyTime p = new PrettyTime();
-        timestamp.setText(p.format(object.getCreatedAt()));
+        holder.timestamp.setText(p.format(object.getCreatedAt()));
         final ArrayList<ParseObject> users;
         if(object.get("likedBy") == null) {
             users = new ArrayList<ParseObject>();
@@ -66,14 +71,15 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         }
         final boolean contains_user = (users != null && users.contains(ParseUser.getCurrentUser()));
         if(contains_user) {
-            likeButton.setText("UNLIKE");
+            holder.likeButton.setText("UNLIKE");
         }else {
-            likeButton.setText("LIKE");
+            holder.likeButton.setText("LIKE");
         }
-        likeButton.setOnClickListener(new View.OnClickListener() {
+        final ViewHolder finalHolder = holder;
+        holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                likeButton.setEnabled(false);
+                finalHolder.likeButton.setEnabled(false);
                 if (contains_user) {
                     users.remove(ParseUser.getCurrentUser());
                 } else {
@@ -83,7 +89,7 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
                 object.saveEventually(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        likeButton.setEnabled(true);
+                        finalHolder.likeButton.setEnabled(true);
                     }
                 });
                 loadObjects();
@@ -91,27 +97,37 @@ public class PostAdapter extends ParseQueryAdapter<ParseObject> {
         });
         long like_count = users.size();
         if(like_count > 0) {
-            likeCountView.setVisibility(View.VISIBLE);
+            holder.likeCountView.setVisibility(View.VISIBLE);
+        }else {
+            holder.likeCountView.setVisibility(View.GONE);
         }
-        likeCountView.setText(like_count > 1 ?
+        holder.likeCountView.setText(like_count > 1 ?
                 like_count + " users like this post" :
                 like_count + " user likes this post");
         ParseFile postImage = object.getParseFile("image");
         if(postImage != null) {
             Uri imageUri = Uri.parse(postImage.getUrl());
             Picasso.with(getContext()).load(imageUri.toString())
-                    .placeholder( R.drawable.progress_animation ).fit().centerCrop().into(imageView);
+                    .placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.imageView);
         }
 
 
 
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
-        contentsView.setText(object.getString("contents"));
-        usernameView.setText(object.getParseUser("createdBy").getString("name"));
+        holder.contentsView.setText(object.getString("contents"));
+        holder.usernameView.setText(object.getParseUser("createdBy").getString("name"));
         Picasso.with(parent.getContext())
                     .load(Gravatar.gravatarUrl(object.getParseUser("createdBy")
                             .getEmail())).placeholder( R.drawable.progress_animation )
                     .fit().into(profileView);
         return v;
+    }
+    static class ViewHolder{
+        TextView contentsView;
+        TextView usernameView;
+        TextView likeCountView;
+        TextView timestamp;
+        ImageView imageView;
+        Button likeButton;
     }
 }

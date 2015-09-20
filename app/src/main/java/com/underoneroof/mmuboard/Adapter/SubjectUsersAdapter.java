@@ -39,15 +39,22 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
         loadObjects();
     }
     public View getItemView(final ParseObject object, View v, ViewGroup parent) {
+        ViewHolder holder = null;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.listitem_subject_users, null);
+            holder = new ViewHolder();
+            holder.usernameView = (TextView) v.findViewById(R.id.username);
+            holder.accessView = (Spinner) v.findViewById(R.id.access_status);
+            v.setTag(holder);
+
+        }else {
+            holder = (ViewHolder) v.getTag ();
         }
 
 
-        TextView usernameView = (TextView) v.findViewById(R.id.username);
-        Spinner accessView = (Spinner) v.findViewById(R.id.access_status);
-        accessView.setSelection(object.getInt("status") - 1 );
-        accessView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        holder.accessView.setSelection(object.getInt("status") - 1 );
+        holder.accessView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if((object.getInt("status") - 1) != position) {
@@ -68,14 +75,19 @@ public class SubjectUsersAdapter extends ParseQueryAdapter<ParseObject>{
             }
         });
         if(!mSpinnerEnabled || (object.getInt("status") == 3)) {
-            accessView.setEnabled(false);
-            accessView.setClickable(false);
+            holder.accessView.setEnabled(false);
+            holder.accessView.setClickable(false);
         }
-        usernameView.setText(object.getParseUser("user").getString("name"));
+        holder.usernameView.setText(object.getParseUser("user").getString("name"));
         CircleImageView profileView = (CircleImageView) v.findViewById(R.id.profile_image);
         Picasso.with(parent.getContext())
                 .load(Gravatar.gravatarUrl(object.getParseUser("user").getEmail()))
                 .fit().into(profileView);
         return v;
+    }
+    static class ViewHolder {
+        TextView usernameView;
+        Spinner accessView;
+
     }
 }
