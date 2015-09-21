@@ -1,20 +1,8 @@
 package com.underoneroof.mmuboard.Model;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.github.mikephil.charting.data.BarEntry;
-import com.parse.CountCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Jack on 9/17/15.

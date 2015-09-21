@@ -15,24 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.CountCallback;
-import com.parse.DeleteCallback;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.ui.ParseLoginBuilder;
 import com.squareup.picasso.Picasso;
-import com.underoneroof.mmuboard.Model.Analytics;
-import com.underoneroof.mmuboard.Model.Post;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 import com.underoneroof.mmuboard.Utility.Utility;
-
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

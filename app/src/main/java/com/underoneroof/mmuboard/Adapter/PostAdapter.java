@@ -2,14 +2,12 @@ package com.underoneroof.mmuboard.Adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.parse.CountCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -18,7 +16,6 @@ import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
-import com.underoneroof.mmuboard.Model.User;
 import com.underoneroof.mmuboard.R;
 import com.underoneroof.mmuboard.Utility.Gravatar;
 
